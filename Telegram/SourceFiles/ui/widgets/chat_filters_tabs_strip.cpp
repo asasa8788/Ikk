@@ -6,10 +6,10 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "ui/widgets/chat_filters_tabs_strip.h"
-#include "nagram/chats/managed_folders.h"
-#include "nagram/chats/options.h"
-#include "nagram/chats/folders.h"
-#include "nagram/core/options.h"
+#include "ikk/chats/managed_folders.h"
+#include "ikk/chats/options.h"
+#include "ikk/chats/folders.h"
+#include "ikk/core/options.h"
 
 #include "api/api_chat_filters_remove_manager.h"
 #include "boxes/choose_filter_box.h"
@@ -75,7 +75,7 @@ void ShowMenu(
 	{
 		const auto list = session->data().chatsFilters().displayList();
 		if (index < 0 || index >= list.size()) {
-			state->menu = Nagram::Chats::FolderTabMenu(
+			state->menu = Ikk::Chats::FolderTabMenu(
 				parent,
 				controller,
 				index - int(list.size()));
@@ -97,7 +97,7 @@ void ShowMenu(
 			tr::lng_filters_context_edit(tr::now),
 			[=] { EditExistingFilter(controller, id); },
 			&st::menuIconEdit);
-		Nagram::Chats::AddManagedOnlyAction(addAction, session, id);
+		Ikk::Chats::AddManagedOnlyAction(addAction, session, id);
 
 		MarkAsReadMenu::AddChatListAction(
 			controller,
@@ -236,7 +236,7 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 			parent,
 			trackActiveFilterAndUnreadAndReorder
 				? st::dialogsSearchTabs
-				: Nagram::Chats::FiltersTabsStyle(st::chatsFiltersTabs)));
+				: Ikk::Chats::FiltersTabsStyle(st::chatsFiltersTabs)));
 	const auto state = wrap->lifetime().make_state<State>();
 	const auto reassignUnreadValue = [=] {
 		state->reorderLifetime.destroy();
@@ -246,8 +246,8 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 			rpl::combine(
 				Data::UnreadStateValue(session, list[i].id()),
 				rpl::duplicate(includeMuted),
-				Nagram::ForDevice().Value(
-					Nagram::Chats::kHideFolderUnreadCounters)
+				Ikk::ForDevice().Value(
+					Ikk::Chats::kHideFolderUnreadCounters)
 			) | rpl::on_next([=](
 					const Dialogs::UnreadState &state,
 					bool includeMuted,
@@ -398,7 +398,7 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 			return On(PowerSaving::kEmojiChat)
 				|| controller->isGifPausedAtLeastFor(pauseLevel);
 		};
-		const auto tabs = Nagram::Chats::FolderTabs(
+		const auto tabs = Ikk::Chats::FolderTabs(
 			list,
 			trackActiveFilterAndUnreadAndReorder);
 		const auto sectionsChanged = slider->setSectionsAndCheckChanged(
@@ -412,7 +412,7 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 					? Data::ForceCustomEmojiStatic(title.text)
 					: title.text;
 			}) | ranges::to_vector, context, paused);
-		slider->setSectionIcons(Nagram::Chats::FolderTabIcons(tabs, ranges::views::all(
+		slider->setSectionIcons(Ikk::Chats::FolderTabIcons(tabs, ranges::views::all(
 			tabs
 		) | ranges::views::transform([](const Data::ChatFilter &filter) {
 			return LookupFilterIcon(filter.id()
@@ -483,7 +483,7 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 		if (trackActiveFilterAndUnreadAndReorder) {
 			controller->activeChatsFilter(
 			) | rpl::on_next([=](FilterId id) {
-				if (!id && Nagram::Chats::RedirectFromAllChats(controller)) {
+				if (!id && Ikk::Chats::RedirectFromAllChats(controller)) {
 					controller->setActiveChatsFilter(
 						session->data().chatsFilters().displayList().front().id());
 					return;
@@ -511,9 +511,9 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 				if (!state->ignoreActivation) {
 					state->ignoreActivation = true;
 					slider->setActiveSectionFast(
-						Nagram::Chats::ShownFolderTab(controller, tabs, was));
+						Ikk::Chats::ShownFolderTab(controller, tabs, was));
 					state->ignoreActivation = false;
-					Nagram::Chats::FolderTabChosen(controller, tabs[index].id());
+					Ikk::Chats::FolderTabChosen(controller, tabs[index].id());
 				}
 				return;
 			}
@@ -526,7 +526,7 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 				applyFilter(filter);
 			}
 		}, state->rebuildLifetime);
-		Nagram::Chats::WatchArchiveTab(controller, slider, tabs, [=](int index) {
+		Ikk::Chats::WatchArchiveTab(controller, slider, tabs, [=](int index) {
 			state->ignoreActivation = true;
 			slider->setActiveSection(index);
 			state->ignoreActivation = false;
@@ -554,10 +554,10 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 	rpl::combine(
 		session->data().chatsFilters().changed(),
 		Data::AmPremiumValue(session) | rpl::to_empty,
-		Nagram::ForDevice().Value(Nagram::Chats::kHideAllChatsFolder)
+		Ikk::ForDevice().Value(Ikk::Chats::kHideAllChatsFolder)
 			| rpl::to_empty
 	) | rpl::on_next(rebuild, wrap->lifetime());
-	Nagram::Chats::FolderListItemsChanges(
+	Ikk::Chats::FolderListItemsChanges(
 	) | rpl::on_next(rebuild, wrap->lifetime());
 	Core::App().settings().chatFiltersTabsModeValue(
 	) | rpl::on_next([=](ChatsFiltersTabsMode mode) {

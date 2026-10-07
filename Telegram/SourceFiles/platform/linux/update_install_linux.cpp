@@ -395,7 +395,7 @@ void ReportProgress(const char *message) {
 	return Core::Updates::VerifyUpdate(
 		bytes,
 		Core::BuildUpdateChannel,
-		Nagram::VersionIsBeta() || beta,
+		Ikk::VersionIsBeta() || beta,
 		*target,
 		Core::RunningUpdateVersion(),
 		held,

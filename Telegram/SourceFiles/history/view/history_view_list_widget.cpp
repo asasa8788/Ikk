@@ -6,10 +6,10 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "history/view/history_view_list_widget.h"
-#include "nagram/messages/online.h"
-#include "nagram/messages/content.h"
-#include "nagram/messages/reactions.h"
-#include "nagram/privacy/protection.h"
+#include "ikk/messages/online.h"
+#include "ikk/messages/content.h"
+#include "ikk/messages/reactions.h"
+#include "ikk/privacy/protection.h"
 
 #include "history/view/history_view_about_view.h"
 #include "base/unixtime.h"
@@ -666,7 +666,7 @@ ListWidget::ListWidget(
 	) | rpl::on_next([=] {
 		update();
 	}, lifetime());
-	Nagram::Messages::RepaintOnSenderOnline(this, _session);
+	Ikk::Messages::RepaintOnSenderOnline(this, _session);
 
 	_session->data().peerDecorationsUpdated(
 	) | rpl::on_next([=] {
@@ -2191,7 +2191,7 @@ bool ListWidget::showCopyMediaRestriction(not_null<HistoryItem*> item) {
 }
 
 bool ListWidget::hasCopyRestrictionForSelected() const {
-	if (Nagram::Privacy::ForceCopy()) {
+	if (Ikk::Privacy::ForceCopy()) {
 		return false;
 	} else if (hasCopyRestriction()) {
 		return true;
@@ -3277,7 +3277,7 @@ void ListWidget::paintUserpics(
 					view->width(),
 					st::msgPhotoSize,
 					context.paused);
-				Nagram::Messages::PaintSenderOnline(p, from,
+				Ikk::Messages::PaintSenderOnline(p, from,
 					st::historyPhotoLeft, userpicTop, st::msgPhotoSize);
 			} else if (const auto info = item->displayHiddenSenderInfo()) {
 				if (info->customUserpic.empty()) {
@@ -3315,7 +3315,7 @@ ListWidget::VideoUserpic *ListWidget::validateVideoUserpic(
 		not_null<PeerData*> peer) {
 	if (!peer->isPremium()
 		|| peer->userpicPhotoUnknown()
-		|| !Nagram::Messages::VideoUserpicAllowed(peer)) {
+		|| !Ikk::Messages::VideoUserpicAllowed(peer)) {
 		_videoUserpics.remove(peer);
 		return nullptr;
 	}
@@ -4178,7 +4178,7 @@ void ListWidget::showContextMenu(QContextMenuEvent *e, bool showFromTouch) {
 		? _overElement->data().get()
 		: nullptr;
 	const auto attached = (reactItem
-		&& Nagram::Messages::AllowReactionSelector(hasSelection))
+		&& Ikk::Messages::AllowReactionSelector(hasSelection))
 		? AttachSelectorToMenu(
 			_menu.get(),
 			controller(),
@@ -6777,8 +6777,8 @@ void ConfirmSendNowSelectedItems(not_null<ListWidget*> widget) {
 CopyRestrictionType CopyRestrictionTypeFor(
 		not_null<PeerData*> peer,
 		HistoryItem *item) {
-	return (Nagram::Privacy::AllowsCopy(peer)
-		&& (!item || !Nagram::Privacy::ForbidsCopy(item)))
+	return (Ikk::Privacy::AllowsCopy(peer)
+		&& (!item || !Ikk::Privacy::ForbidsCopy(item)))
 		? CopyRestrictionType::None
 		: peer->isUser()
 		? CopyRestrictionType::User

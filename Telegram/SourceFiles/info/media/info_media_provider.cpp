@@ -6,7 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "info/media/info_media_provider.h"
-#include "nagram/privacy/protection.h"
+#include "ikk/privacy/protection.h"
 
 #include "apiwrap.h"
 #include "info/media/info_media_widget.h"
@@ -74,7 +74,7 @@ Provider::Provider(not_null<AbstractController*> controller)
 		}
 	}, _lifetime);
 
-	Nagram::Privacy::SensitiveRevealed(
+	Ikk::Privacy::SensitiveRevealed(
 		&_controller->session()
 	) | rpl::on_next([=] {
 		for (auto &[id, layout] : _layouts) {
@@ -90,7 +90,7 @@ Type Provider::type() {
 bool Provider::hasSelectRestriction() {
 	if (_peer->session().frozen()) {
 		return true;
-	} else if (Nagram::Privacy::AllowsCopy(_peer)) {
+	} else if (Ikk::Privacy::AllowsCopy(_peer)) {
 		return false;
 	} else if (const auto chat = _peer->asChat()) {
 		return !chat->canDeleteMessages();

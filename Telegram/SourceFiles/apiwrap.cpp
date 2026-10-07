@@ -81,9 +81,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/history_item_components.h"
 #include "history/history_item_helpers.h"
 #include "history/view/controls/history_view_forward_panel.h"
-#include "nagram/compose/options.h"
-#include "nagram/compose/text.h"
-#include "nagram/messages/content.h"
+#include "ikk/compose/options.h"
+#include "ikk/compose/text.h"
+#include "ikk/messages/content.h"
 #include "iv/editor/iv_editor_session.h"
 #include "iv/iv_rich_message_serializer.h"
 #include "main/main_session.h"
@@ -1947,7 +1947,7 @@ void ApiWrap::joinChannel(not_null<ChannelData*> channel) {
 
 		using Flag = ChannelDataFlag;
 		chatParticipants().loadSimilarPeers(channel);
-		if (!Nagram::Messages::CollapseRecommendedChannels()) {
+		if (!Ikk::Messages::CollapseRecommendedChannels()) {
 			channel->setFlags(channel->flags() | Flag::SimilarExpanded);
 		}
 	}
@@ -4567,8 +4567,8 @@ void ApiWrap::sendRichMessage(
 	const auto submittedSummary = item->originalText();
 
 	StripEphemeralReply(_session, action.replyTo);
-	const auto forwardFirst = Nagram::ForDevice().Get(
-		Nagram::Compose::kForwardBeforeComment);
+	const auto forwardFirst = Ikk::ForDevice().Get(
+		Ikk::Compose::kForwardBeforeComment);
 	if (forwardFirst) {
 		finishForwarding(action);
 	}
@@ -4782,8 +4782,8 @@ void ApiWrap::sendMessage(
 	if (Api::SendDice(message)) {
 		return;
 	}
-	const auto forwardFirst = Nagram::ForDevice().Get(
-		Nagram::Compose::kForwardBeforeComment);
+	const auto forwardFirst = Ikk::ForDevice().Get(
+		Ikk::Compose::kForwardBeforeComment);
 	if (forwardFirst) {
 		finishForwarding(action);
 	}
@@ -4794,7 +4794,7 @@ void ApiWrap::sendMessage(
 		textWithTags.text,
 		TextUtilities::ConvertTextTagsToEntities(textWithTags.tags)
 	};
-	left = Nagram::Compose::PrepareText(left, false);
+	left = Ikk::Compose::PrepareText(left, false);
 	auto prepareFlags = Ui::ItemTextOptions(
 		history,
 		_session->user()).flags;
@@ -4840,8 +4840,8 @@ void ApiWrap::sendMessage(
 			mediaFlags |= MTPmessages_SendMedia::Flag::f_reply_to;
 		}
 		const auto ignoreWebPage = message.webPage.removed
-			|| (Nagram::ForDevice().Get(
-				Nagram::Compose::kDisableLinkPreview) && !message.webPage.manual)
+			|| (Ikk::ForDevice().Get(
+				Ikk::Compose::kDisableLinkPreview) && !message.webPage.manual)
 			|| (exactWebPage && !isLast);
 		const auto manualWebPage = exactWebPage
 			&& !ignoreWebPage

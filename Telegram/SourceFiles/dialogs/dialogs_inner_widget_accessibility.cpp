@@ -6,8 +6,8 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "dialogs/dialogs_inner_widget_accessibility.h"
-#include "nagram/chats/layout.h"
-#include "nagram/messages/badges.h"
+#include "ikk/chats/layout.h"
+#include "ikk/messages/badges.h"
 
 #include "data/notify/data_notify_settings.h"
 #include "data/data_channel.h"
@@ -208,7 +208,7 @@ QString RowAccessibilityName(
 	}
 
 	if (const auto user = peer->asUser()) {
-		if (user->isPremium() && Nagram::Messages::ShowPremiumBadges()) {
+		if (user->isPremium() && Ikk::Messages::ShowPremiumBadges()) {
 			parts << tr::lng_premium(tr::now);
 		}
 	}
@@ -255,8 +255,8 @@ QString RowAccessibilityName(
 		parts << tr::lng_sr_chat_mention(tr::now);
 	}
 
-	if (Nagram::Chats::HidePreview(false, peer->isSelf())) {
-		parts << Nagram::Chats::HiddenPreviewText(false);
+	if (Ikk::Chats::HidePreview(false, peer->isSelf())) {
+		parts << Ikk::Chats::HiddenPreviewText(false);
 	} else if (history->chatListMessage()) {
 		const auto item = history->chatListMessage();
 		parts += MessageTailParts(item, history, peer);
@@ -364,7 +364,7 @@ QString SubItemValue(
 	case SubItem::Premium:
 		if (const auto user = peer->asUser()) {
 			if (user->isPremium()
-				&& Nagram::Messages::ShowPremiumBadges()) {
+				&& Ikk::Messages::ShowPremiumBadges()) {
 				return tr::lng_premium(tr::now);
 			}
 		}
@@ -434,8 +434,8 @@ QString SubItemValue(
 		return {};
 	}
 	case SubItem::Message: {
-		if (Nagram::Chats::HidePreview(false, peer->isSelf())) {
-			return Nagram::Chats::HiddenPreviewText(false);
+		if (Ikk::Chats::HidePreview(false, peer->isSelf())) {
+			return Ikk::Chats::HiddenPreviewText(false);
 		}
 		const auto chatItem = history->chatListMessage();
 		if (!chatItem || chatItem->isService()) {
@@ -629,7 +629,7 @@ QString PeerSearchResultAccessibilityName(
 	}
 
 	if (const auto user = peer->asUser()) {
-		if (user->isPremium() && Nagram::Messages::ShowPremiumBadges()) {
+		if (user->isPremium() && Ikk::Messages::ShowPremiumBadges()) {
 			parts << tr::lng_premium(tr::now);
 		}
 	}

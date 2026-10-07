@@ -6,10 +6,10 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/main_window.h"
-#include "nagram/interface/options.h"
-#include "nagram/interface/appearance.h"
-#include "nagram/interface/app_icon.h"
-#include "nagram/privacy/options.h"
+#include "ikk/interface/options.h"
+#include "ikk/interface/appearance.h"
+#include "ikk/interface/app_icon.h"
+#include "ikk/privacy/options.h"
 
 #include "api/api_updates.h"
 #include "storage/localstorage.h"
@@ -144,7 +144,7 @@ const char kOptionNewWindowsSizeAsFirst[] = "new-windows-size-as-first";
 const char kOptionDisableTouchbar[] = "touchbar-disabled";
 
 const QImage &Logo() {
-	if (const auto custom = Nagram::Interface::CustomLogo()) {
+	if (const auto custom = Ikk::Interface::CustomLogo()) {
 		return *custom;
 	}
 	static const auto result = QImage(u":/gui/art/logo_256.png"_q);
@@ -152,7 +152,7 @@ const QImage &Logo() {
 }
 
 const QImage &LogoNoMargin() {
-	if (const auto custom = Nagram::Interface::CustomLogo()) {
+	if (const auto custom = Ikk::Interface::CustomLogo()) {
 		return *custom;
 	}
 	static const auto result = QImage(u":/gui/art/logo_256_no_margin.png"_q);
@@ -224,7 +224,7 @@ QIcon CreateSupportIcon(Main::Session *session) {
 }
 
 QIcon CreateIcon(Main::Session *session, bool returnNullIfDefault) {
-	if (auto custom = Nagram::Interface::CustomAppIcon(); !custom.isNull()) {
+	if (auto custom = Ikk::Interface::CustomAppIcon(); !custom.isNull()) {
 		return custom;
 	}
 	const auto supportIcon = CreateSupportIcon(session);
@@ -436,10 +436,10 @@ MainWindow::MainWindow(not_null<Controller*> controller)
 		unreadCounterChangedHook();
 		Core::App().tray().updateIconCounters();
 	}, lifetime());
-	Nagram::ForDevice().changes(
+	Ikk::ForDevice().changes(
 	) | rpl::filter([](auto key) {
-		return key == Nagram::Interface::kHideAppIconBadge.key
-			|| key == Nagram::Interface::kAccountNameInTitle.key;
+		return key == Ikk::Interface::kHideAppIconBadge.key
+			|| key == Ikk::Interface::kAccountNameInTitle.key;
 	}) | rpl::on_next([=] {
 		updateTitle();
 		unreadCounterChangedHook();
@@ -911,8 +911,8 @@ void MainWindow::updateTitle() {
 	}
 
 	const auto suffix = nativeTitleSuffix();
-	if (Nagram::Privacy::DemoMode()) {
-		setTitle(u"Nagram"_q + suffix);
+	if (Ikk::Privacy::DemoMode()) {
+		setTitle(u"Ikk"_q + suffix);
 		return;
 	}
 	const auto settings = Core::App().settings().windowTitleContent();
@@ -925,7 +925,7 @@ void MainWindow::updateTitle() {
 	const auto user = (session
 		&& !settings.hideAccountName
 		&& (Core::App().domain().accountsAuthedCount() > 1
-			|| Nagram::Interface::AccountNameInTitle()))
+			|| Ikk::Interface::AccountNameInTitle()))
 		? st::wrap_rtl(session->authedName())
 		: QString();
 	const auto separateSharedMediaTitle = session
@@ -940,7 +940,7 @@ void MainWindow::updateTitle() {
 		: Dialogs::Key();
 	const auto thread = key ? key.thread() : nullptr;
 	if (!thread) {
-		setTitle((user.isEmpty() ? u"Nagram"_q : user) + added + suffix);
+		setTitle((user.isEmpty() ? u"Ikk"_q : user) + added + suffix);
 		return;
 	}
 	const auto history = thread->owningHistory();

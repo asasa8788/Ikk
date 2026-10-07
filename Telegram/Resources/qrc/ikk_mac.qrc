@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="/ikk/icons">
+    <file alias="block_dark.png">../ikk/icons/block_dark.png</file>
+    <file alias="block_black_dark.png">../ikk/icons/block_black_dark.png</file>
+    <file alias="block_blue_dark.png">../ikk/icons/block_blue_dark.png</file>
+    <file alias="block_niello_dark.png">../ikk/icons/block_niello_dark.png</file>
+    <file alias="block_purple_dark.png">../ikk/icons/block_purple_dark.png</file>
+    <file alias="classic_dark.png">../ikk/icons/classic_dark.png</file>
+    <file alias="colorful_dark.png">../ikk/icons/colorful_dark.png</file>
+    <file alias="cyan_dark.png">../ikk/icons/cyan_dark.png</file>
+    <file alias="black_dark.png">../ikk/icons/black_dark.png</file>
+  </qresource>
+</RCC>

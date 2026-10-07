@@ -8,7 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "platform/mac/launcher_mac.h"
 
 #include "core/crash_reports.h"
-#include "nagram/core/relaunch.h"
+#include "ikk/core/relaunch.h"
 #include "core/update_checker.h"
 #include "base/base_file_utilities.h"
 #include "base/platform/base_platform_file_utilities.h"
@@ -56,7 +56,7 @@ bool Launcher::launchUpdater(UpdaterLaunch action) {
 		if (cDataFile() != u"data"_q) {
 			arguments << u"-key"_q << cDataFile();
 		}
-		if (Nagram::RelaunchWithoutUpdater(
+		if (Ikk::RelaunchWithoutUpdater(
 				cExeDir() + cExeName(),
 				arguments)) {
 			return true;

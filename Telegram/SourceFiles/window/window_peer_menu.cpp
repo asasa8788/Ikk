@@ -6,14 +6,14 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/window_peer_menu.h"
-#include "nagram/privacy/options.h"
-#include "nagram/privacy/alias.h"
-#include "nagram/privacy/admin_shortcuts.h"
-#include "nagram/filters/menu.h"
-#include "nagram/services/auto_translate.h"
-#include "nagram/services/send_translation.h"
-#include "nagram/chats/recent_chats.h"
-#include "nagram/chats/local_pins.h"
+#include "ikk/privacy/options.h"
+#include "ikk/privacy/alias.h"
+#include "ikk/privacy/admin_shortcuts.h"
+#include "ikk/filters/menu.h"
+#include "ikk/services/auto_translate.h"
+#include "ikk/services/send_translation.h"
+#include "ikk/chats/recent_chats.h"
+#include "ikk/chats/local_pins.h"
 
 #include "base/call_delayed.h"
 #include "menu/menu_check_item.h"
@@ -415,7 +415,7 @@ bool PinnedLimitReached(
 		owner->setChatPinned(wasted, FilterId(), false);
 		owner->setChatPinned(history, FilterId(), true);
 		history->session().api().savePinnedOrder(folder);
-	} else if (Nagram::Chats::TryLocalPin(controller, history)) {
+	} else if (Ikk::Chats::TryLocalPin(controller, history)) {
 		return true;
 	} else if (folder) {
 		controller->show(Box(FolderPinsLimitBox, &history->session()));
@@ -443,7 +443,7 @@ void TogglePinnedThread(
 		not_null<Dialogs::Entry*> entry,
 		Fn<void()> onToggled) {
 	if (!entry->folderKnown()
-		|| Nagram::Chats::LocalUnpin(entry, onToggled)) {
+		|| Ikk::Chats::LocalUnpin(entry, onToggled)) {
 		return;
 	}
 	const auto owner = &entry->owner();
@@ -573,7 +573,7 @@ void Filler::addTogglePin() {
 		return;
 	} else if (InsideCollapsedCommunity(_request.key.history())) {
 		return;
-	} else if (Nagram::Chats::AddLocalUnpinAction(
+	} else if (Ikk::Chats::AddLocalUnpinAction(
 			_addAction,
 			entry,
 			filterId)) {
@@ -1184,8 +1184,8 @@ void Filler::addLocalAlias() {
 	}
 	const auto peer = _peer;
 	const auto show = _controller->uiShow();
-	_addAction(tr::lng_nagram_peer_alias(tr::now), [=] {
-		Nagram::Privacy::ShowAlias(show, peer);
+	_addAction(tr::lng_ikk_peer_alias(tr::now), [=] {
+		Ikk::Privacy::ShowAlias(show, peer);
 	}, &st::menuIconEdit);
 }
 
@@ -1461,8 +1461,8 @@ void Filler::addCreatePoll() {
 }
 
 void Filler::addCreateTodoList() {
-	if (skipCreateActions() || Nagram::ForDevice().Get(
-		Nagram::Privacy::kHideCreateTodo)) {
+	if (skipCreateActions() || Ikk::ForDevice().Get(
+		Ikk::Privacy::kHideCreateTodo)) {
 		return;
 	}
 	const auto can = _topic
@@ -1960,7 +1960,7 @@ void Filler::fillHistoryActions() {
 	addInfo();
 	addViewAsTopics();
 	addManageChat();
-	Nagram::Privacy::AddAdminShortcuts(_addAction, _controller, _peer);
+	Ikk::Privacy::AddAdminShortcuts(_addAction, _controller, _peer);
 	addStoryArchive();
 	addSupportInfo();
 	addBoostChat();
@@ -1972,9 +1972,9 @@ void Filler::fillHistoryActions() {
 	addDirectMessages();
 	addExportChat();
 	addTranslate();
-	Nagram::AutoTranslate::AddPeerMenu(_addAction, _controller, _peer);
-	Nagram::SendTranslation::AddPeerMenu(_addAction, _controller, _peer);
-	Nagram::Filters::AddScopeAction(_addAction, _controller, _peer, nullptr);
+	Ikk::AutoTranslate::AddPeerMenu(_addAction, _controller, _peer);
+	Ikk::SendTranslation::AddPeerMenu(_addAction, _controller, _peer);
+	Ikk::Filters::AddScopeAction(_addAction, _controller, _peer, nullptr);
 	addReport();
 	addClearHistory();
 	addDeleteChat();
@@ -1994,7 +1994,7 @@ void Filler::fillProfileActions() {
 	addViewStatistics();
 	addStoryArchive();
 	addManageChat();
-	Nagram::Privacy::AddAdminShortcuts(_addAction, _controller, _peer);
+	Ikk::Privacy::AddAdminShortcuts(_addAction, _controller, _peer);
 	addSetPersonalChannel();
 	addTopicLink();
 	addManageTopic();
@@ -2016,7 +2016,7 @@ void Filler::fillRepliesActions() {
 	if (_topic) {
 		addInfo();
 		addManageTopic();
-		Nagram::Filters::AddScopeAction(_addAction, _controller, _peer, _topic);
+		Ikk::Filters::AddScopeAction(_addAction, _controller, _peer, _topic);
 	}
 	addBoostChat();
 	addCreatePoll();
@@ -3490,7 +3490,7 @@ base::weak_qptr<Ui::BoxContent> ShowForwardMessagesBox(
 
 		if (!id) {
 			state->list.push_back(session->user());
-			Nagram::Chats::ForEachRecentShareTarget(
+			Ikk::Chats::ForEachRecentShareTarget(
 				session,
 				[&](not_null<History*> history) {
 					if (recent.emplace(history->peer).second) {

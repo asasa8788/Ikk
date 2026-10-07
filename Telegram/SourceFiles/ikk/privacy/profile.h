@@ -1,0 +1,18 @@
+#pragma once
+
+#include "ui/text/text_entity.h"
+#include <gsl/pointers>
+#include <rpl/rpl.h>
+
+class PeerData;
+
+namespace Ikk::Privacy {
+
+[[nodiscard]] rpl::producer<TextWithEntities> ProfileIdValue(
+	not_null<PeerData*> peer);
+[[nodiscard]] rpl::producer<TextWithEntities> ProfileDcValue(
+	not_null<PeerData*> peer);
+[[nodiscard]] rpl::producer<TextWithEntities> ProfileRegistrationValue(
+	not_null<PeerData*> peer);
+
+} // namespace Ikk::Privacy

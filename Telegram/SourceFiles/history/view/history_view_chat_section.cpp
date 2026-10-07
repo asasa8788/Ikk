@@ -35,8 +35,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/history_item_components.h"
 #include "history/history_item_helpers.h" // GetErrorForSending.
 #include "history/history_view_pull_to_next_channel.h"
-#include "nagram/compose/confirm.h"
-#include "nagram/compose/options.h"
+#include "ikk/compose/confirm.h"
+#include "ikk/compose/options.h"
 #include "history/history_item_reply_markup.h"
 #include "history/history_view_pull_to_next_channel.h"
 #include "iv/iv_rich_message_serializer.h"
@@ -2374,7 +2374,7 @@ void ChatWidget::send(Api::SendOptions options) {
 			return;
 		}
 	}
-	if (Nagram::Compose::TranslateBeforeSend(
+	if (Ikk::Compose::TranslateBeforeSend(
 			controller()->uiShow(),
 			_peer,
 			_composeControls->fieldForMention(),
@@ -3155,7 +3155,7 @@ bool ChatWidget::sendExistingDocument(
 			return false;
 		}
 	}
-	if (Nagram::Compose::ConfirmBeforeSend(
+	if (Ikk::Compose::ConfirmBeforeSend(
 			controller()->uiShow(),
 			document,
 			crl::guard(this, [=] {
@@ -3264,7 +3264,7 @@ void ChatWidget::sendInlineResult(
 	if (!checked) {
 		return;
 	}
-	if (Nagram::Compose::ConfirmBeforeSend(
+	if (Ikk::Compose::ConfirmBeforeSend(
 			controller()->uiShow(),
 			result->document(),
 			crl::guard(this, [=] {
@@ -5409,7 +5409,7 @@ void ChatWidget::sendBotCommand(
 		return;
 	}
 	if (!request.replyTo
-		&& Nagram::ForDevice().Get(Nagram::Compose::kBotCommandsToDraft)) {
+		&& Ikk::ForDevice().Get(Ikk::Compose::kBotCommandsToDraft)) {
 		const auto canSendTexts = (mode() == Mode::History)
 			? Data::CanSend(_peer, ChatRestriction::SendOther)
 			: _bottom->canSendTexts();

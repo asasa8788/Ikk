@@ -6,9 +6,9 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "history/history.h"
-#include "nagram/chats/sort.h"
-#include "nagram/privacy/alias.h"
-#include "nagram/services/auto_translate.h"
+#include "ikk/chats/sort.h"
+#include "ikk/privacy/alias.h"
+#include "ikk/services/auto_translate.h"
 
 #include "history/view/history_view_element.h"
 #include "history/view/history_view_item_preview.h"
@@ -169,7 +169,7 @@ History::History(not_null<Data::Session*> owner, PeerId peerId)
 : Thread(owner, Type::History)
 , peer(owner->peer(peerId))
 , _delegateMixin(HistoryInner::DelegateMixin())
-, _chatListNameSortKey(TextUtilities::NameSortKey(Nagram::Privacy::DisplayName(peer)))
+, _chatListNameSortKey(TextUtilities::NameSortKey(Ikk::Privacy::DisplayName(peer)))
 , _sendActionPainter(this) {
 	Thread::setMuted(owner->notifySettings().isMuted(peer));
 
@@ -2371,7 +2371,7 @@ void History::setMuted(bool muted) {
 		const auto notifier = unreadStateChangeNotifier(notify);
 		Thread::setMuted(muted);
 	}
-	if (Nagram::Chats::SortingEnabled()) updateChatListSortPosition();
+	if (Ikk::Chats::SortingEnabled()) updateChatListSortPosition();
 	session().changes().peerUpdated(
 		peer,
 		Data::PeerUpdate::Flag::Notifications);
@@ -2882,9 +2882,9 @@ bool History::chatListMessageKnown() const {
 
 const QString &History::chatListName() const {
 	if (const auto broadcast = peer->monoforumBroadcast()) {
-		return Nagram::Privacy::DisplayName(broadcast);
+		return Ikk::Privacy::DisplayName(broadcast);
 	}
-	return Nagram::Privacy::DisplayName(peer);
+	return Ikk::Privacy::DisplayName(peer);
 }
 
 const QString &History::chatListNameSortKey() const {
@@ -2893,7 +2893,7 @@ const QString &History::chatListNameSortKey() const {
 
 void History::refreshChatListNameSortKey() {
 	_chatListNameSortKey = TextUtilities::NameSortKey(
-		Nagram::Privacy::DisplayName(peer));
+		Ikk::Privacy::DisplayName(peer));
 }
 
 const base::flat_set<QString> &History::chatListNameWords() const {
@@ -4526,7 +4526,7 @@ void History::translateOfferFrom(LanguageId id) {
 		using Flag = PeerData::TranslationFlag;
 		if ((peer->autoTranslation()
 			&& (peer->translationFlag() == Flag::Enabled))
-			|| Nagram::AutoTranslate::Enabled(this)) {
+			|| Ikk::AutoTranslate::Enabled(this)) {
 			translateTo(Core::App().settings().translateTo());
 		}
 	} else {

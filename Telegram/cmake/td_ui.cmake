@@ -12,9 +12,9 @@ include(lib_ui/cmake/generate_styles.cmake)
 include(cmake/generate_numbers.cmake)
 
 set(style_files
-    nagram/compose/nagram_compose.style
-    nagram/interface/nagram_interface.style
-    nagram/snapshot/nagram_snapshot.style
+    ikk/compose/ikk_compose.style
+    ikk/interface/ikk_interface.style
+    ikk/snapshot/ikk_snapshot.style
     ui/td_common.style
     ui/filter_icons.style
     ui/menu_icons.style

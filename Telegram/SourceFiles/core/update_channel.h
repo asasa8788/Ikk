@@ -9,7 +9,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 #include "core/update_verify.h"
 #include "core/version.h"
-#include "nagram/core/version.h"
+#include "ikk/core/version.h"
 
 #include <QtCore/QString>
 
@@ -69,7 +69,7 @@ inline constexpr auto CanaryMetadataMessageId
 [[nodiscard]] inline quint64 RunningUpdateVersion() {
 	return Updates::MakeUpdateVersion(
 		quint32(AppVersion),
-		Nagram::UpdateRevision());
+		Ikk::UpdateRevision());
 }
 
 [[nodiscard]] inline QString CanaryVersionSuffix() {

@@ -6,7 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "info/media/info_media_list_widget.h"
-#include "nagram/privacy/protection.h"
+#include "ikk/privacy/protection.h"
 
 #include "info/global_media/info_global_media_provider.h"
 #include "info/media/info_media_common.h"
@@ -302,7 +302,7 @@ void ListWidget::subscribeToSession(
 void ListWidget::setupSelectRestriction() {
 	rpl::merge(
 		_provider->hasSelectRestrictionChanges(),
-		Nagram::Privacy::ForceCopyChanges()
+		Ikk::Privacy::ForceCopyChanges()
 	) | rpl::filter([=] {
 		return _provider->hasSelectRestriction() && hasSelectedItems();
 	}) | rpl::on_next([=] {

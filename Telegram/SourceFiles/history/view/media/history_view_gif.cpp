@@ -8,8 +8,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/view/media/history_view_gif.h"
 
 #include "apiwrap.h"
-#include "nagram/media/options.h"
-#include "nagram/media/extras.h"
+#include "ikk/media/options.h"
+#include "ikk/media/extras.h"
 #include "api/api_transcribes.h"
 #include "lang/lang_keys.h"
 #include "mainwindow.h"
@@ -374,7 +374,7 @@ QSize Gif::countThumbSize(int &inOutWidthMax) const {
 		} else if (_data->isVideoMessage()) {
 			return st::maxVideoMessageSize;
 		}
-		return Nagram::Media::GifMaxSize(st::maxGifSize);
+		return Ikk::Media::GifMaxSize(st::maxGifSize);
 	}();
 	const auto size = style::ConvertScale(videoSize());
 	if (hostedInstantView) {
@@ -588,7 +588,7 @@ bool Gif::underCursor(bool fullFeatured) const {
 }
 
 bool Gif::autoplayEnabled() const {
-	if (Nagram::ForDevice().Get(Nagram::Media::kDisableVideoAutoplay)
+	if (Ikk::ForDevice().Get(Ikk::Media::kDisableVideoAutoplay)
 		&& (_data->isVideoFile() || _data->isVideoMessage())) {
 		return false;
 	}

@@ -1,5 +1,5 @@
 {
-  description = "Nagram Desktop, an independent Telegram client based on Telegram Desktop";
+  description = "Ikk Desktop, an independent Telegram client based on Telegram Desktop";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -28,22 +28,22 @@
           ./LICENSE
         ];
       };
-      # Written by tools/nagram/nix_release.py after every stable release.
+      # Written by tools/ikk/nix_release.py after every stable release.
       released = ./packaging/nix/release.json;
     in
     {
       # The released binary, which carries the API credentials of the project.
       packages = lib.optionalAttrs (builtins.pathExists released) {
         x86_64-linux = rec {
-          nagram-desktop = nixpkgs.legacyPackages.x86_64-linux.callPackage ./packaging/nix/package-bin.nix {
+          ikk-desktop = nixpkgs.legacyPackages.x86_64-linux.callPackage ./packaging/nix/package-bin.nix {
             inherit (lib.importJSON released) version hash;
           };
-          default = nagram-desktop;
+          default = ikk-desktop;
         };
       };
 
       # A build from source, with Telegram API credentials of the caller:
-      #   nagram.lib.fromSource { pkgs = ...; apiId = 12345; apiHash = "..."; }
+      #   ikk.lib.fromSource { pkgs = ...; apiId = 12345; apiHash = "..."; }
       # It needs the Git submodules: refer to this flake with ?submodules=1.
       lib.fromSource =
         {
@@ -53,7 +53,7 @@
         }:
         pkgs.callPackage ./packaging/nix/package.nix {
           inherit src apiId apiHash;
-          version = "${field ./Telegram/build/version "AppVersionStr"}.${field ./Telegram/build/nagram_version "NagramRevision"}";
+          version = "${field ./Telegram/build/version "AppVersionStr"}.${field ./Telegram/build/ikk_version "IkkRevision"}";
         };
     };
 }

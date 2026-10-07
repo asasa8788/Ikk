@@ -1,8 +1,8 @@
-#define MyAppShortName "Nagram"
-#define MyAppName "Nagram Desktop"
-#define MyAppPublisher "NextAlone and Nagram contributors"
-#define MyAppURL "https://github.com/NextAlone/Nagram-qt"
-#define MyAppExeName "Nagram.exe"
+#define MyAppShortName "Ikk"
+#define MyAppName "Ikk Desktop"
+#define MyAppPublisher "Ikk developers"
+#define MyAppURL "https://github.com/ikk-dev/Ikk"
+#define MyAppExeName "Ikk.exe"
 #define MyAppId "F113D826-7421-5D5F-91E5-E07C9D902EFF"
 #define CurrentYear GetDateTimeString('yyyy','','')
 
@@ -24,7 +24,7 @@ AllowNoIcons=yes
 OutputDir={#ReleasePath}
 SetupIconFile={#SourcePath}..\Resources\art\icon256.ico
 UninstallDisplayName={#MyAppName}
-UninstallDisplayIcon={app}\Nagram.exe
+UninstallDisplayIcon={app}\Ikk.exe
 Compression=lzma
 SolidCompression=yes
 DisableStartupPrompt=yes
@@ -77,7 +77,7 @@ Name: "ua";      MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "{#ReleasePath}\Nagram.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ReleasePath}\Ikk.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#ReleasePath}\Updater.exe"; DestDir: "{app}"; Flags: ignoreversion
 #if MyBuildTarget != "winarm"
 Source: "{#ReleasePath}\{#ModulesFolder}\d3d\d3dcompiler_47.dll"; DestDir: "{app}\{#ModulesFolder}\d3d"; Flags: ignoreversion skipifsourcedoesntexist

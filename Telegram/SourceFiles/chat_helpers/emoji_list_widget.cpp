@@ -6,7 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "chat_helpers/emoji_list_widget.h"
-#include "nagram/media/options.h"
+#include "ikk/media/options.h"
 
 #include "window/window_media_preview.h"
 #include "api/api_peer_photo.h"
@@ -615,7 +615,7 @@ EmojiListWidget::EmojiListWidget(
 		refreshCustom();
 		resizeToWidth(width());
 	}, lifetime());
-	Nagram::ForDevice().Value(Nagram::Media::kHideRecommendedEmoji
+	Ikk::ForDevice().Value(Ikk::Media::kHideRecommendedEmoji
 	) | rpl::skip(1) | rpl::on_next([=] {
 		refreshCustom();
 		resizeToWidth(width());
@@ -3626,7 +3626,7 @@ void EmojiListWidget::refreshCustom() {
 	for (const auto setId : owner->stickers().emojiSetsOrder()) {
 		push(setId, true);
 	}
-	if (!Nagram::ForDevice().Get(Nagram::Media::kHideRecommendedEmoji)) {
+	if (!Ikk::ForDevice().Get(Ikk::Media::kHideRecommendedEmoji)) {
 		for (const auto setId : owner->stickers().featuredEmojiSetsOrder()) {
 			push(setId, false);
 		}

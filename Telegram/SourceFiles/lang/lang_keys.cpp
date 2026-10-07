@@ -10,7 +10,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "base/const_string.h"
 #include "lang/lang_file_parser.h"
 #include "ui/integration.h"
-#include "nagram/privacy/display.h"
+#include "ikk/privacy/display.h"
 
 #include <QtCore/QLocale>
 
@@ -77,15 +77,15 @@ QString langFullName(
 	} else if (lastName.isEmpty()) {
 		return firstName;
 	}
-	return Nagram::Privacy::LastNameFirst().value_or(langFirstNameGoesSecond())
+	return Ikk::Privacy::LastNameFirst().value_or(langFirstNameGoesSecond())
 		? (lastName + u' ' + firstName)
 		: (firstName + u' ' + lastName);
 }
 
 QString langDayOfMonth(const QDate &date) {
-	if (const auto persian = Nagram::Privacy::PersianDate(
+	if (const auto persian = Ikk::Privacy::PersianDate(
 			date,
-			Nagram::Privacy::DateStyle::Day)) {
+			Ikk::Privacy::DateStyle::Day)) {
 		return *persian;
 	}
 	auto day = date.day();
@@ -109,9 +109,9 @@ QString langDayOfMonth(const QDate &date) {
 }
 
 QString langDayOfMonthFull(const QDate &date) {
-	if (const auto persian = Nagram::Privacy::PersianDate(
+	if (const auto persian = Ikk::Privacy::PersianDate(
 			date,
-			Nagram::Privacy::DateStyle::DayFull)) {
+			Ikk::Privacy::DateStyle::DayFull)) {
 		return *persian;
 	}
 	auto day = date.day();
@@ -135,9 +135,9 @@ QString langDayOfMonthFull(const QDate &date) {
 }
 
 QString langDayOfMonthShort(const QDate &date) {
-	if (const auto persian = Nagram::Privacy::PersianDate(
+	if (const auto persian = Ikk::Privacy::PersianDate(
 			date,
-			Nagram::Privacy::DateStyle::Day)) {
+			Ikk::Privacy::DateStyle::Day)) {
 		return *persian;
 	}
 	auto day = date.day();
@@ -165,9 +165,9 @@ QString langMonthOfYear(int month, int year) {
 }
 
 QString langMonth(const QDate &date) {
-	if (const auto persian = Nagram::Privacy::PersianDate(
+	if (const auto persian = Ikk::Privacy::PersianDate(
 			date,
-			Nagram::Privacy::DateStyle::Month)) {
+			Ikk::Privacy::DateStyle::Month)) {
 		return *persian;
 	}
 	return langDateMaybeWithYear(date, [](int month, int year) {
@@ -189,9 +189,9 @@ QString langMonthOfYearFull(int month, int year) {
 }
 
 QString langMonthFull(const QDate &date) {
-	if (const auto persian = Nagram::Privacy::PersianDate(
+	if (const auto persian = Ikk::Privacy::PersianDate(
 			date,
-			Nagram::Privacy::DateStyle::MonthFull)) {
+			Ikk::Privacy::DateStyle::MonthFull)) {
 		return *persian;
 	}
 	return langDateMaybeWithYear(date, [](int month, int year) {

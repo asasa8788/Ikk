@@ -8,7 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/translate_box.h"
 #include "boxes/translate_box_content.h"
 #include "lang/translate_provider.h"
-#include "nagram/services/translation.h"
+#include "ikk/services/translation.h"
 
 #include "base/weak_ptr.h"
 #include "core/application.h"
@@ -430,7 +430,7 @@ void TranslateBox(
 			MsgId msgId,
 			bool restricted,
 			not_null<GenericBox*> box)
-		: provider(Nagram::CreateMessageTranslateProvider(peer, msgId, restricted,
+		: provider(Ikk::CreateMessageTranslateProvider(peer, msgId, restricted,
 			crl::guard(box, [=](QString error) { box->showToast(error); }))) {
 		}
 

@@ -6,8 +6,8 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "dialogs/dialogs_entry.h"
-#include "nagram/chats/sort.h"
-#include "nagram/chats/local_pins.h"
+#include "ikk/chats/sort.h"
+#include "ikk/chats/local_pins.h"
 
 #include "dialogs/dialogs_key.h"
 #include "dialogs/dialogs_indexed_list.h"
@@ -224,7 +224,7 @@ void Entry::updateChatListSortPosition() {
 		&& hasUnreadUnmutedForSort())
 		? UnreadOnTopDialogPos(sortKeyByDate)
 		: sortKeyByDate;
-	_sortKeyByDate = Nagram::Chats::SortKey(*this, _sortKeyByDate);
+	_sortKeyByDate = Ikk::Chats::SortKey(*this, _sortKeyByDate);
 	const auto fixedIndex = fixedOnTopIndex();
 	_sortKeyInChatList = fixedIndex
 		? FixedOnTopDialogPos(fixedIndex)
@@ -252,7 +252,7 @@ uint64 Entry::computeSortPosition(FilterId filterId) const {
 	const auto index = lookupPinnedIndex(filterId);
 	return index
 		? PinnedDialogPos(index)
-		: Nagram::Chats::LocalPinSortKey(*this, filterId, _sortKeyByDate);
+		: Ikk::Chats::LocalPinSortKey(*this, filterId, _sortKeyByDate);
 }
 
 bool Entry::hasUnreadUnmutedForSort() const {
@@ -327,7 +327,7 @@ void Entry::notifyUnreadStateChange(const UnreadState &wasState) {
 			sublist,
 			Data::SublistUpdate::Flag::UnreadView);
 	}
-	if (owner().dialogsUnreadOnTop() || Nagram::Chats::SortingEnabled()) {
+	if (owner().dialogsUnreadOnTop() || Ikk::Chats::SortingEnabled()) {
 		updateChatListSortPosition();
 	}
 	updateChatListEntryPostponed();

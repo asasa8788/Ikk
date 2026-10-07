@@ -6,12 +6,12 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "history/view/history_view_element.h"
-#include "nagram/messages/format.h"
-#include "nagram/messages/reactions.h"
-#include "nagram/messages/content.h"
-#include "nagram/messages/reading.h"
-#include "nagram/messages/options.h"
-#include "nagram/filters/view.h"
+#include "ikk/messages/format.h"
+#include "ikk/messages/reactions.h"
+#include "ikk/messages/content.h"
+#include "ikk/messages/reading.h"
+#include "ikk/messages/options.h"
+#include "ikk/filters/view.h"
 
 #include "apiwrap.h"
 #include "api/api_transcribes.h"
@@ -755,7 +755,7 @@ QString DateTooltipText(not_null<Element*> view) {
 	if (const auto stars = item->out() ? item->starsPaid() : 0) {
 		dateText += '\n' + tr::lng_you_paid_stars(tr::now, lt_count, stars);
 	}
-	return Nagram::Messages::WithMessageId(std::move(dateText), item);
+	return Ikk::Messages::WithMessageId(std::move(dateText), item);
 }
 
 void UnreadBar::init(const QString &string) {
@@ -1628,7 +1628,7 @@ void Element::refreshMedia(Element *replacing) {
 	_flags &= ~Flag::HiddenByGroup;
 
 	const auto item = data();
-	if (Nagram::Filters::Hidden(item)) {
+	if (Ikk::Filters::Hidden(item)) {
 		_media = nullptr;
 		return;
 	}
@@ -1655,7 +1655,7 @@ void Element::refreshMedia(Element *replacing) {
 		}
 		_media = media->createView(this, replacing);
 	} else if (item->showSimilarChannels()) {
-		_media = Nagram::Messages::RecommendedChannelsMedia(this);
+		_media = Ikk::Messages::RecommendedChannelsMedia(this);
 	} else if (isOnlyCustomEmoji()
 		&& Core::App().settings().largeEmoji()
 		&& !item->isSponsored()) {
@@ -2188,7 +2188,7 @@ void Element::setTextWithLinks(
 	if (_flags & Flag::ServiceMessage) {
 		const auto &options = Ui::ItemTextServiceOptions();
 		_text.setMarkedText(st::serviceTextStyle,
-			Nagram::Messages::ServiceText(this, text), options, context);
+			Ikk::Messages::ServiceText(this, text), options, context);
 		auto linkIndex = 0;
 		for (const auto &link : links) {
 			// Link indices start with 1.
@@ -2196,20 +2196,20 @@ void Element::setTextWithLinks(
 		}
 	} else {
 		const auto item = data();
-		const auto filtered = Nagram::Filters::Project(item, text);
-		const auto display = Nagram::Filters::DisplayText(filtered);
+		const auto filtered = Ikk::Filters::Project(item, text);
+		const auto display = Ikk::Filters::DisplayText(filtered);
 		const auto &options = Ui::ItemTextOptions(item);
 		clearSpecialOnlyEmoji();
-		const auto spacing = Nagram::ForDevice().Get(
-			Nagram::Messages::kReadingSpacing);
-		const auto chinese = Nagram::ForDevice().Get(
-			Nagram::Messages::kReadingChinese);
-		if (!item->nagramOriginalShown() && (spacing || chinese)) {
-			if (!_nagramReading) {
-				_nagramReading = std::make_unique<Nagram::Messages::ReadingCache>();
+		const auto spacing = Ikk::ForDevice().Get(
+			Ikk::Messages::kReadingSpacing);
+		const auto chinese = Ikk::ForDevice().Get(
+			Ikk::Messages::kReadingChinese);
+		if (!item->ikkOriginalShown() && (spacing || chinese)) {
+			if (!_ikkReading) {
+				_ikkReading = std::make_unique<Ikk::Messages::ReadingCache>();
 			}
 			_text.setMarkedText(st::messageTextStyle,
-				_nagramReading->Get(display, spacing, chinese), options, context);
+				_ikkReading->Get(display, spacing, chinese), options, context);
 		} else {
 			_text.setMarkedText(st::messageTextStyle, display, options, context);
 		}
@@ -2886,7 +2886,7 @@ void Element::refreshReactions() {
 		setReactions(nullptr);
 		return;
 	}
-	auto reactionsData = Nagram::Messages::FilterInlineReactions(
+	auto reactionsData = Ikk::Messages::FilterInlineReactions(
 		this, InlineListDataFromMessage(this));
 	if (reactionsData.reactions.empty()) {
 		setReactions(nullptr);

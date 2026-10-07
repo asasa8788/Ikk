@@ -6,7 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "export/export_api_wrap.h"
-#include "nagram/export/range.h"
+#include "ikk/export/range.h"
 
 #include "export/export_settings.h"
 #include "export/data/export_data_types.h"
@@ -1864,7 +1864,7 @@ void ApiWrap::checkFirstMessageDate(int localSplitIndex, int count) {
 void ApiWrap::resolveMessagesRange(int localSplitIndex, int count) {
 	Expects(_chatProcess != nullptr);
 
-	using namespace Nagram::Export;
+	using namespace Ikk::Export;
 	const auto mine = [=] { return _chatProcess->info.onlyMyMessages; };
 	// WHY: getHistory returns the newest message with date <= offset_date,
 	// so offset_date = date - 1 with add_offset = -1 gives the first one
@@ -2840,7 +2840,7 @@ void ApiWrap::finishMessagesSlice() {
 	auto slice = *base::take(_chatProcess->slice);
 	if (!slice.list.empty()) {
 		_chatProcess->largestIdPlusOne = slice.list.back().id + 1;
-		if (Nagram::Export::PastRange(slice.list, _settings->singlePeerTill)) {
+		if (Ikk::Export::PastRange(slice.list, _settings->singlePeerTill)) {
 			_chatProcess->lastSlice = true;
 		}
 		const auto splitIndex = _chatProcess->info.splits[

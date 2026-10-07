@@ -6,7 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "mainwidget.h"
-#include "nagram/links/behavior.h"
+#include "ikk/links/behavior.h"
 
 #include "api/api_updates.h"
 #include "api/api_views.h"
@@ -863,7 +863,7 @@ void MainWidget::searchMessages(
 			.query = tags.empty() ? query : QString(),
 		};
 		state.tab = state.defaultTabForMe();
-		Nagram::Links::ApplyHashtagSearchPage(state);
+		Ikk::Links::ApplyHashtagSearchPage(state);
 		_dialogs->searchMessages(std::move(state));
 		if (isOneColumn()) {
 			_controller->clearSectionStack();

@@ -58,12 +58,12 @@ public:
 		return _selected;
 	}
 
-	void nagramSetFolder(FilterId id, bool recent) {
-		_nagramFolderId = id;
-		_nagramRecent = recent;
+	void ikkSetFolder(FilterId id, bool recent) {
+		_ikkFolderId = id;
+		_ikkRecent = recent;
 	}
-	[[nodiscard]] bool nagramRecentChosen() const {
-		return _nagramRecent;
+	[[nodiscard]] bool ikkRecentChosen() const {
+		return _ikkRecent;
 	}
 
 	void rowClicked(not_null<PeerListRow*> row) override;
@@ -80,8 +80,8 @@ private:
 	void updateTitle();
 
 	const not_null<Main::Session*> _session;
-	FilterId _nagramFolderId = 0;
-	bool _nagramRecent = false;
+	FilterId _ikkFolderId = 0;
+	bool _ikkRecent = false;
 	const Fn<void()> _showLimitReached;
 	rpl::producer<QString> _title;
 	base::flat_set<not_null<History*>> _peers;

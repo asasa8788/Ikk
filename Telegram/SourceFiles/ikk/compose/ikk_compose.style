@@ -1,0 +1,88 @@
+using "ui/basic.style";
+using "ui/widgets/widgets.style";
+
+ikkFilterTypeRecent: icon {{ "folders/folders_type_recent", historyPeerUserpicFg }};
+ikkFoldersArchive: icon {{ "folders/svg/folders_archive-36x36", sideBarIconFg }};
+ikkFoldersArchiveActive: icon {{ "folders/svg/folders_archive-36x36", sideBarIconFgActive }};
+ikkFoldersTabsArchive: icon {{ "folders/svg/folders_archive-18x18", windowSubTextFg }};
+ikkFoldersSaved: icon {{ "folders/svg/folders_saved-36x36", sideBarIconFg }};
+ikkFoldersSavedActive: icon {{ "folders/svg/folders_saved-36x36", sideBarIconFgActive }};
+ikkFoldersTabsSaved: icon {{ "folders/svg/folders_saved-18x18", windowSubTextFg }};
+
+ikkFormatButtonSize: 32px;
+ikkFormatButton: IconButton(defaultIconButton) {
+	width: ikkFormatButtonSize;
+	height: ikkFormatButtonSize;
+	iconPosition: point(-1px, -1px);
+	rippleAreaPosition: point(0px, 0px);
+	rippleAreaSize: ikkFormatButtonSize;
+	ripple: defaultRippleAnimationBgOver;
+}
+ikkFormatPadding: margins(4px, 4px, 4px, 4px);
+ikkFormatRadius: 8px;
+ikkFormatSkip: 6px;
+
+ikkFormatBold: icon {{ "menu/rich/bold-24x24", menuIconColor }};
+ikkFormatItalic: icon {{ "menu/rich/italic-24x24", menuIconColor }};
+ikkFormatUnderline: icon {{ "menu/rich/underline-24x24", menuIconColor }};
+ikkFormatStrikeOut: icon {{ "menu/rich/strikeout-24x24", menuIconColor }};
+ikkFormatCode: icon {{ "menu/rich/code-24x24", menuIconColor }};
+ikkFormatSpoiler: icon {{ "menu/rich/spoiler-24x24", menuIconColor }};
+ikkFormatQuote: icon {{ "menu/rich/blockquote-24x24", menuIconColor }};
+ikkFormatLink: icon {{ "menu/rich/link-24x24", menuIconColor }};
+ikkFormatClear: icon {{ "menu/rich/plain_text-24x24", menuIconColor }};
+
+ikkFormatBoldActive: icon {{ "menu/rich/bold-24x24", windowActiveTextFg }};
+ikkFormatItalicActive: icon {{ "menu/rich/italic-24x24", windowActiveTextFg }};
+ikkFormatUnderlineActive: icon {{ "menu/rich/underline-24x24", windowActiveTextFg }};
+ikkFormatStrikeOutActive: icon {{ "menu/rich/strikeout-24x24", windowActiveTextFg }};
+ikkFormatCodeActive: icon {{ "menu/rich/code-24x24", windowActiveTextFg }};
+ikkFormatSpoilerActive: icon {{ "menu/rich/spoiler-24x24", windowActiveTextFg }};
+ikkFormatQuoteActive: icon {{ "menu/rich/blockquote-24x24", windowActiveTextFg }};
+
+ikkChatToolsPhoto: icon {{ "menu/image", menuIconFg }};
+ikkChatToolsPhotoOver: icon {{ "menu/image", menuIconFgOver }};
+ikkChatToolsPin: icon {{ "menu/pin", menuIconFg }};
+ikkChatToolsPinOver: icon {{ "menu/pin", menuIconFgOver }};
+ikkChatToolsStart: icon {{ "history_down_arrow-flip_vertical", menuIconFg }};
+ikkChatToolsStartOver: icon {{ "history_down_arrow-flip_vertical", menuIconFgOver }};
+ikkChatToolsMute: icon {{ "menu/mute", menuIconFg }};
+ikkChatToolsMuteOver: icon {{ "menu/mute", menuIconFgOver }};
+ikkChatToolsUnmute: icon {{ "menu/unmute", menuIconFg }};
+ikkChatToolsUnmuteOver: icon {{ "menu/unmute", menuIconFgOver }};
+ikkChatToolsButton: IconButton(defaultIconButton) {
+	width: 36px;
+	height: 54px;
+	iconPosition: point(-1px, -1px);
+	rippleAreaPosition: point(0px, 9px);
+	rippleAreaSize: 36px;
+	ripple: defaultRippleAnimationBgOver;
+}
+
+ikkCompactPopupMenu: PopupMenu(popupMenuWithIcons) {
+	scrollPadding: margins(0px, 3px, 0px, 3px);
+	menu: Menu(menuWithIcons) {
+		itemIconPosition: point(15px, 2px);
+		itemPadding: margins(54px, 5px, 17px, 5px);
+	}
+}
+
+ikkCompactFiltersTabs: SettingsSlider(defaultSettingsSlider) {
+	padding: 5px;
+	height: 33px;
+	barTop: 30px;
+	barSkip: 0px;
+	barStroke: 6px;
+	barRadius: 2px;
+	barFg: transparent;
+	barSnapToLabel: true;
+	strictSkip: 10px;
+	labelTop: 7px;
+	labelStyle: semiboldTextStyle;
+	labelFg: windowSubTextFg;
+	labelFgActive: lightButtonFg;
+	rippleBottomSkip: 0px;
+	rippleBg: windowBgOver;
+	rippleBgActive: lightButtonBgOver;
+	ripple: defaultRippleAnimation;
+}

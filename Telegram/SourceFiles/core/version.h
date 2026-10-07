@@ -19,9 +19,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 // used in Updater.cpp and Setup.iss for Windows
 constexpr auto AppId = "{F113D826-7421-5D5F-91E5-E07C9D902EFF}"_cs;
-constexpr auto AppNameOld = "Nagram Desktop"_cs;
-constexpr auto AppName = "Nagram Desktop"_cs;
-constexpr auto AppFile = "Nagram"_cs;
+constexpr auto AppNameOld = "Ikk Desktop"_cs;
+constexpr auto AppName = "Ikk Desktop"_cs;
+constexpr auto AppFile = "Ikk"_cs;
 constexpr auto AppVersion = 7002010;
 constexpr auto AppVersionStr = "7.2.10";
 constexpr auto AppBetaVersion = true;

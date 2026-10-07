@@ -28,7 +28,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "main/main_account.h"
 #include "main/main_session.h"
 #include "main/main_domain.h"
-#include "nagram/core/updates.h"
+#include "ikk/core/updates.h"
 #include "info/info_memento.h"
 #include "info/info_controller.h"
 #include "window/window_controller.h"
@@ -479,7 +479,7 @@ enum class ManifestAdoption {
 	const auto verified = Updates::VerifyUpdate(
 		content,
 		BuildUpdateChannel,
-		Nagram::VersionIsBeta() || cInstallBetaVersion(),
+		Ikk::VersionIsBeta() || cInstallBetaVersion(),
 		*target,
 		RunningUpdateVersion(),
 		HeldManifest(),
@@ -730,7 +730,7 @@ HttpChecker::HttpChecker(bool testing) : Checker(testing) {
 }
 
 void HttpChecker::start() {
-	const auto path = Nagram::Updates::FeedUrl();
+	const auto path = Ikk::Updates::FeedUrl();
 	auto url = QUrl(path);
 	DEBUG_LOG(("Update Info: requesting update state"));
 	const auto request = QNetworkRequest(url);
@@ -843,7 +843,7 @@ std::optional<QString> HttpChecker::parseResponse(
 	return validateLatestUrl(
 		bestAvailableVersion,
 		bestIsAvailableAlpha,
-		Nagram::Updates::DownloadPrefix() + bestLink);
+		Ikk::Updates::DownloadPrefix() + bestLink);
 }
 
 QString HttpChecker::validateLatestUrl(
@@ -852,7 +852,7 @@ QString HttpChecker::validateLatestUrl(
 		QString url) const {
 	const auto myVersion = isAvailableAlpha
 		? cAlphaVersion()
-		: Nagram::Updates::FeedVersion();
+		: Ikk::Updates::FeedVersion();
 	const auto validVersion = (cAlphaVersion() || !isAvailableAlpha);
 	if (!validVersion || availableVersion <= myVersion) {
 		return QString();
@@ -1003,7 +1003,7 @@ MtpChecker::MtpChecker(
 }
 
 void MtpChecker::start() {
-	if (Nagram::Updates::SkipTelegramFeed() || !_mtp.valid()) {
+	if (Ikk::Updates::SkipTelegramFeed() || !_mtp.valid()) {
 		LOG(("Update Info: MTP is unavailable."));
 		crl::on_main(this, [=] { fail(); });
 		return;
@@ -2180,7 +2180,7 @@ void UpdateApplication() {
 			} else if (KSandbox::isSnap()) {
 				return "https://snapcraft.io/telegram-desktop";
 			}
-			return "https://github.com/NextAlone/Nagram-qt/releases";
+			return "https://github.com/ikk-dev/Ikk/releases";
 #endif // OS_WIN_STORE || OS_MAC_STORE
 		}();
 		UrlClickHandler::Open(url);

@@ -6,10 +6,10 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/window_filters_menu.h"
-#include "nagram/chats/folders.h"
-#include "nagram/chats/managed_folders.h"
-#include "nagram/chats/options.h"
-#include "nagram/core/options.h"
+#include "ikk/chats/folders.h"
+#include "ikk/chats/managed_folders.h"
+#include "ikk/chats/options.h"
+#include "ikk/core/options.h"
 
 #include "menu/menu_mark_as_read.h"
 #include "mainwindow.h"
@@ -162,7 +162,7 @@ void FiltersMenu::setup() {
 	rpl::combine(
 		rpl::single(rpl::empty) | rpl::then(filters->changed()),
 		std::move(premium),
-		Nagram::ForDevice().Value(Nagram::Chats::kHideAllChatsFolder)
+		Ikk::ForDevice().Value(Ikk::Chats::kHideAllChatsFolder)
 	) | rpl::on_next([=] {
 		refresh();
 	}, _outer.lifetime());
@@ -172,7 +172,7 @@ void FiltersMenu::setup() {
 	) | rpl::filter([=](FilterId id) {
 		return (id != _activeFilterId);
 	}) | rpl::on_next([=](FilterId id) {
-		if (!id && Nagram::Chats::RedirectFromAllChats(_session)) {
+		if (!id && Ikk::Chats::RedirectFromAllChats(_session)) {
 			_session->setActiveChatsFilter(filters->displayList().front().id());
 			return;
 		}
@@ -197,7 +197,7 @@ void FiltersMenu::setup() {
 	) | rpl::on_next([=] {
 		const auto i = _filters.find(_activeFilterId);
 		if (i != end(_filters)) {
-			i->second->setActive(Nagram::Chats::FolderButtonActive(_session));
+			i->second->setActive(Ikk::Chats::FolderButtonActive(_session));
 		}
 	}, _outer.lifetime());
 
@@ -399,7 +399,7 @@ void FiltersMenu::refresh() {
 
 	auto now = base::flat_map<int, base::unique_qptr<Ui::SideBarButton>>();
 	if (!_session->activeChatsFilterCurrent()
-		&& Nagram::Chats::RedirectFromAllChats(_session)) {
+		&& Ikk::Chats::RedirectFromAllChats(_session)) {
 		_session->setActiveChatsFilter(filters->displayList().front().id());
 	}
 	const auto &currentFilter = _session->activeChatsFilterCurrent();
@@ -456,7 +456,7 @@ void FiltersMenu::refresh() {
 void FiltersMenu::setupList() {
 	_list = _container->add(object_ptr<TabListLayout>(_container));
 	_list->setAccessibleName(tr::lng_filters_title(tr::now));
-	Nagram::Chats::SetupFolderListButtons(_container, _session);
+	Ikk::Chats::SetupFolderListButtons(_container, _session);
 	_setup = prepareButton(
 		_container,
 		-1,
@@ -629,8 +629,8 @@ base::unique_qptr<Ui::SideBarButton> FiltersMenu::prepareButton(
 		rpl::combine(
 			Data::UnreadStateValue(&_session->session(), id),
 			Data::IncludeMutedCounterFoldersValue(),
-			Nagram::ForDevice().Value(
-				Nagram::Chats::kHideFolderUnreadCounters)
+			Ikk::ForDevice().Value(
+				Ikk::Chats::kHideFolderUnreadCounters)
 		) | rpl::on_next([=](
 				const Dialogs::UnreadState &state,
 				bool includeMuted,
@@ -705,7 +705,7 @@ base::unique_qptr<Ui::SideBarButton> FiltersMenu::prepareButton(
 		});
 	}
 	raw->setActive((_session->activeChatsFilterCurrent() == id)
-		&& Nagram::Chats::FolderButtonActive(_session));
+		&& Ikk::Chats::FolderButtonActive(_session));
 	raw->setClickedCallback([=] {
 		if (_reordering) {
 			return;
@@ -787,7 +787,7 @@ void FiltersMenu::showMenu(QPoint position, FilterId id) {
 			tr::lng_filters_context_edit(tr::now),
 			crl::guard(&_outer, [=] { EditExistingFilter(_session, id); }),
 			&st::menuIconEdit);
-		Nagram::Chats::AddManagedOnlyAction(addAction, &_session->session(), id);
+		Ikk::Chats::AddManagedOnlyAction(addAction, &_session->session(), id);
 
 		auto filteredChats = [=] {
 			return _session->session().data().chatsFilters().chatsList(id);

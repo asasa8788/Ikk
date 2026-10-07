@@ -6,7 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "info/profile/info_profile_actions.h"
-#include "nagram/privacy/profile.h"
+#include "ikk/privacy/profile.h"
 
 #include "api/api_blocked_peers.h"
 #include "api/api_chat_participants.h"
@@ -1882,12 +1882,12 @@ Section DetailsFiller::makeInfo() {
 		}
 	}
 	if (!_topic) {
-		addInfoOneLine(tr::lng_nagram_profile_id(),
-			Nagram::Privacy::ProfileIdValue(_peer), QString());
-		addInfoOneLine(tr::lng_nagram_profile_dc(),
-			Nagram::Privacy::ProfileDcValue(_peer), QString());
-		addInfoOneLine(tr::lng_nagram_profile_registration(),
-			Nagram::Privacy::ProfileRegistrationValue(_peer), QString());
+		addInfoOneLine(tr::lng_ikk_profile_id(),
+			Ikk::Privacy::ProfileIdValue(_peer), QString());
+		addInfoOneLine(tr::lng_ikk_profile_dc(),
+			Ikk::Privacy::ProfileDcValue(_peer), QString());
+		addInfoOneLine(tr::lng_ikk_profile_registration(),
+			Ikk::Privacy::ProfileRegistrationValue(_peer), QString());
 	}
 	raw->toggleOn(tracker.atLeastOneShownValue());
 	raw->finishAnimating();

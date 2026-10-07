@@ -6,8 +6,8 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "history/view/history_view_reply.h"
-#include "nagram/interface/options.h"
-#include "nagram/messages/content.h"
+#include "ikk/interface/options.h"
+#include "ikk/messages/content.h"
 
 #include "core/click_handler_types.h"
 #include "core/ui_integration.h"
@@ -411,8 +411,8 @@ void Reply::update(
 		|| (externalMedia && externalMedia->hasReplyPreview())
 		|| (pollMediaPtr
 			&& (pollMediaPtr->photo || pollMediaPtr->document));
-	_hasPreview = (hasPreview && !Nagram::ForDevice().Get(
-		Nagram::Interface::kHideReplyThumbnail)) ? 1 : 0;
+	_hasPreview = (hasPreview && !Ikk::ForDevice().Get(
+		Ikk::Interface::kHideReplyThumbnail)) ? 1 : 0;
 	_displaying = data->displaying() ? 1 : 0;
 	_multiline = data->multiline() ? 1 : 0;
 	const auto hasQuoteIcon = _displaying
@@ -820,8 +820,8 @@ void Reply::paint(
 	y += st::historyReplyTop;
 	const auto rect = QRect(x, y, w, _height);
 	const auto selected = context.selected();
-	const auto themeColors = Nagram::ForDevice().Get(
-		Nagram::Interface::kThemeReplyColors);
+	const auto themeColors = Ikk::ForDevice().Get(
+		Ikk::Interface::kThemeReplyColors);
 	const auto backgroundEmojiId = (!themeColors && _colorPeer)
 		? _colorPeer->backgroundEmojiId()
 		: DocumentId();
@@ -874,7 +874,7 @@ void Reply::paint(
 			inBubble,
 			useColorIndex ? colorIndexPlusOne : 0)];
 	const auto rippleColor = cache->bg;
-	const auto simplified = Nagram::Messages::SimplifiedReplies();
+	const auto simplified = Ikk::Messages::SimplifiedReplies();
 	if (!inBubble || simplified) {
 		cache->bg = QColor(0, 0, 0, 0);
 	}

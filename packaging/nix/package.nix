@@ -1,5 +1,5 @@
-# Nagram Desktop built from source: the telegram-desktop package of nixpkgs
-# with the Nagram source. A build from source cannot hide what it compiles in,
+# Ikk Desktop built from source: the telegram-desktop package of nixpkgs
+# with the Ikk source. A build from source cannot hide what it compiles in,
 # so the caller passes Telegram API credentials of their own, see
 # https://core.telegram.org/api/obtaining_api_id. package-bin.nix installs the
 # released binary, which carries the credentials of the project.
@@ -16,10 +16,10 @@
 }:
 
 telegram-desktop.override {
-  pname = "nagram-desktop";
+  pname = "ikk-desktop";
   unwrapped = telegram-desktop.unwrapped.overrideAttrs (
     finalAttrs: previousAttrs: {
-      pname = "nagram-desktop-unwrapped";
+      pname = "ikk-desktop-unwrapped";
       inherit version src;
 
       # nixpkgs adds these two only to the package named telegram-desktop-unwrapped.
@@ -34,15 +34,15 @@ telegram-desktop.override {
       passthru = removeAttrs previousAttrs.passthru [ "updateScript" ];
 
       meta = previousAttrs.meta // {
-        mainProgram = "Nagram";
+        mainProgram = "Ikk";
         description = "Independent Telegram client based on Telegram Desktop";
         longDescription = ''
-          Nagram Desktop is Telegram Desktop with additional interface,
+          Ikk Desktop is Telegram Desktop with additional interface,
           privacy and message options. Its automatic updater is not built:
           the package is updated through Nix.
         '';
-        homepage = "https://github.com/NextAlone/Nagram-qt";
-        changelog = "https://github.com/NextAlone/Nagram-qt/releases/tag/v${finalAttrs.version}";
+        homepage = "https://github.com/ikk-dev/Ikk";
+        changelog = "https://github.com/ikk-dev/Ikk/releases/tag/v${finalAttrs.version}";
         maintainers = [ ];
       };
     }

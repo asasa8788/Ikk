@@ -6,10 +6,10 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "data/data_chat_filters.h"
-#include "nagram/chats/managed_folders.h"
-#include "nagram/chats/recent_chats.h"
-#include "nagram/chats/options.h"
-#include "nagram/core/options.h"
+#include "ikk/chats/managed_folders.h"
+#include "ikk/chats/recent_chats.h"
+#include "ikk/chats/options.h"
+#include "ikk/core/options.h"
 #include "data/data_premium_limits.h"
 
 #include "api/api_text_entities.h"
@@ -344,7 +344,7 @@ const base::flat_set<not_null<History*>> &ChatFilter::never() const {
 bool ChatFilter::contains(
 		not_null<History*> history,
 		bool ignoreFakeUnread) const {
-	if (!Nagram::Chats::AllowedInFolder(history, _id)) return false;
+	if (!Ikk::Chats::AllowedInFolder(history, _id)) return false;
 	const auto flag = [&] {
 		const auto peer = history->peer;
 		if (const auto user = peer->asUser()) {
@@ -367,7 +367,7 @@ bool ChatFilter::contains(
 	}();
 	if (_never.contains(history)) {
 		return false;
-	} else if (Nagram::Chats::RecentInFolder(history, _id)) {
+	} else if (Ikk::Chats::RecentInFolder(history, _id)) {
 		return true;
 	}
 	const auto channel = history->peer->asChannel();
@@ -910,7 +910,7 @@ const std::vector<ChatFilter> &ChatFilters::list() const {
 }
 
 bool ChatFilters::allChatsHidden() const {
-	if (!Nagram::ForDevice().Get(Nagram::Chats::kHideAllChatsFolder)) {
+	if (!Ikk::ForDevice().Get(Ikk::Chats::kHideAllChatsFolder)) {
 		return false;
 	}
 	const auto limit = 1 + PremiumLimits(&_owner->session())

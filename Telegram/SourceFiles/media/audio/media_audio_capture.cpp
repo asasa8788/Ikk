@@ -7,7 +7,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "media/audio/media_audio_capture.h"
 
-#include "nagram/media/audio.h"
+#include "ikk/media/audio.h"
 #include "media/audio/media_audio_capture_common.h"
 #include "media/audio/media_audio_ffmpeg_loader.h"
 #include "media/audio/media_audio_track.h"
@@ -140,7 +140,7 @@ Instance::Instance() : _inner(std::make_unique<Inner>(&_thread)) {
 void Instance::start(Fn<void(Chunk)> externalProcessing) {
 	_updates.fire_done();
 	const auto id = Audio::Current().captureDeviceId();
-	const auto bitrate = Nagram::Media::VoiceRecordBitrate(32000);
+	const auto bitrate = Ikk::Media::VoiceRecordBitrate(32000);
 	InvokeQueued(_inner.get(), [=] {
 		_inner->start(id, [=](Update update) {
 			crl::on_main(this, [=] {

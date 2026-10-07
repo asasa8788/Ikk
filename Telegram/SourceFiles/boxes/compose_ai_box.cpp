@@ -6,8 +6,8 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "boxes/compose_ai_box.h"
-#include "nagram/services/model.h"
-#include "nagram/services/system_ai.h"
+#include "ikk/services/model.h"
+#include "ikk/services/system_ai.h"
 
 #include "api/api_compose_with_ai.h"
 #include "apiwrap.h"
@@ -2611,8 +2611,8 @@ void ComposeAiBox(not_null<Ui::GenericBox*> box, ComposeAiBoxArgs &&args) {
 void ShowComposeAiBox(
 		std::shared_ptr<Ui::Show> show,
 		ComposeAiBoxArgs &&args) {
-	if (args.canApply && Nagram::PrefersSystemAi()) {
-		Nagram::ShowSystemAi(std::move(show), std::move(args));
+	if (args.canApply && Ikk::PrefersSystemAi()) {
+		Ikk::ShowSystemAi(std::move(show), std::move(args));
 	} else {
 		show->show(Box(ComposeAiBox, std::move(args)));
 	}

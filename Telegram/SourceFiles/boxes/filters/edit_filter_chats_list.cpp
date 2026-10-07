@@ -7,7 +7,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "boxes/filters/edit_filter_chats_list.h"
 
-#include "nagram/chats/recent_chats.h"
+#include "ikk/chats/recent_chats.h"
 #include "core/ui_integration.h"
 #include "data/data_chat_filters.h"
 #include "data/data_premium_limits.h"
@@ -102,8 +102,8 @@ public:
 	[[nodiscard]] rpl::producer<Flags> selectedChanges() const;
 	[[nodiscard]] auto rowSelectionChanges() const
 		-> rpl::producer<RowSelectionChange>;
-	[[nodiscard]] rpl::producer<bool> nagramRecentToggles() const {
-		return _nagramRecentToggles.events();
+	[[nodiscard]] rpl::producer<bool> ikkRecentToggles() const {
+		return _ikkRecentToggles.events();
 	}
 
 private:
@@ -115,7 +115,7 @@ private:
 
 	rpl::event_stream<> _selectionChanged;
 	rpl::event_stream<RowSelectionChange> _rowSelectionChanges;
-	rpl::event_stream<bool> _nagramRecentToggles;
+	rpl::event_stream<bool> _ikkRecentToggles;
 
 };
 
@@ -280,8 +280,8 @@ Flags TypeController::collectSelectedOptions() const {
 void TypeController::rowClicked(not_null<PeerListRow*> row) {
 	const auto checked = !row->checked();
 	delegate()->peerListSetRowChecked(row, checked);
-	if (row->id() == Nagram::Chats::kRecentFilterRowId) {
-		_nagramRecentToggles.fire_copy(checked);
+	if (row->id() == Ikk::Chats::kRecentFilterRowId) {
+		_ikkRecentToggles.fire_copy(checked);
 		return;
 	}
 	_rowSelectionChanges.fire({ row, checked });
@@ -446,7 +446,7 @@ int EditFilterChatsListController::selectedTypesCount() const {
 	for (auto i = 0; i != _typesDelegate->peerListFullRowsCount(); ++i) {
 		const auto row = _typesDelegate->peerListRowAt(i);
 		if (row->checked()
-			&& row->id() != Nagram::Chats::kRecentFilterRowId) {
+			&& row->id() != Ikk::Chats::kRecentFilterRowId) {
 			++result;
 		}
 	}
@@ -525,13 +525,13 @@ object_ptr<Ui::RpWidget> EditFilterChatsListController::prepareTypesList() {
 		controller));
 	_typesDelegate->setContent(content);
 	controller->setDelegate(_typesDelegate);
-	if (auto row = _nagramFolderId
-		? Nagram::Chats::MakeRecentFilterRow()
+	if (auto row = _ikkFolderId
+		? Ikk::Chats::MakeRecentFilterRow()
 		: nullptr) {
 		const auto raw = row.get();
 		_typesDelegate->peerListAppendRow(std::move(row));
 		_typesDelegate->peerListRefreshRows();
-		if (_nagramRecent) {
+		if (_ikkRecent) {
 			content->changeCheckState(raw, true, anim::type::instant);
 		}
 	}
@@ -566,9 +566,9 @@ object_ptr<Ui::RpWidget> EditFilterChatsListController::prepareTypesList() {
 			anim::type::normal);
 	}, _lifetime);
 
-	controller->nagramRecentToggles(
+	controller->ikkRecentToggles(
 	) | rpl::on_next([=](bool checked) {
-		_nagramRecent = checked;
+		_ikkRecent = checked;
 	}, _lifetime);
 
 	_deselectOption = [=](PeerListRowId itemId) {

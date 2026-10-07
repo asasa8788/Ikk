@@ -24,8 +24,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "iv/iv_rich_page.h"
 #include "lang/translate_provider.h"
 #include "main/main_session.h"
-#include "nagram/services/auto_translate.h"
-#include "nagram/services/chat_translation.h"
+#include "ikk/services/auto_translate.h"
+#include "ikk/services/chat_translation.h"
 #include "spellcheck/platform/platform_language.h"
 
 namespace HistoryView {
@@ -41,7 +41,7 @@ constexpr auto kRequestCountLimit = 20;
 
 TranslateTracker::TranslateTracker(not_null<History*> history)
 : _history(history)
-, _provider(Nagram::CreateChatTranslateProvider(_history))
+, _provider(Ikk::CreateChatTranslateProvider(_history))
 , _api(&_history->session().mtp())
 , _limit(kEnoughForRecognition) {
 	setup();
@@ -73,9 +73,9 @@ void TranslateTracker::setup() {
 		Core::App().settings().translateChatEnabledValue(),
 		Data::AmPremiumValue(&_history->session()),
 		std::move(autoTranslationValue),
-		Nagram::AutoTranslate::StateValue(_history),
+		Ikk::AutoTranslate::StateValue(_history),
 		[](bool enabled, bool premium, auto automatic, auto state) {
-			return Nagram::AutoTranslate::Tracking(
+			return Ikk::AutoTranslate::Tracking(
 				enabled,
 				premium || automatic,
 				state);
@@ -249,7 +249,7 @@ void TranslateTracker::cancelToRequest() {
 
 void TranslateTracker::cancelSentRequest() {
 	if (_requestInProcess) {
-		Nagram::CancelChatTranslation(_provider.get());
+		Ikk::CancelChatTranslation(_provider.get());
 		const auto owner = &_history->owner();
 		for (const auto &id : base::take(_requested)) {
 			if (const auto item = owner->message(id)) {

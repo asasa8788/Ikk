@@ -678,7 +678,7 @@ int main(int argc, char *argv[])
 			cout << "The -keys-loc param is required for -channel packing!\n";
 			return -1;
 		} else if (!V2Counter) {
-			cout << "Nagram packages require the revision as a positive -counter!\n";
+			cout << "Ikk packages require the revision as a positive -counter!\n";
 			return -1;
 		} else if (!V2EmbedSignatures.empty()) {
 			cout << "The -embed-signatures param requires -unsigned!\n";

@@ -6,7 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "data/stickers/data_stickers.h"
-#include "nagram/media/local_faved.h"
+#include "ikk/media/local_faved.h"
 
 #include "api/api_hash.h"
 #include "chat_helpers/compose/compose_show.h"
@@ -509,7 +509,7 @@ void Stickers::undoInstallLocally(uint64 setId) {
 bool Stickers::isFaved(not_null<const DocumentData*> document) const {
 	const auto &sets = this->sets();
 	const auto it = sets.find(FavedSetId);
-	if (Nagram::Media::LocalFaved(document)) {
+	if (Ikk::Media::LocalFaved(document)) {
 		return true;
 	} else if (it == sets.cend()) {
 		return false;
@@ -543,7 +543,7 @@ void Stickers::checkFavedLimit(
 		}
 		++i;
 	}
-	if (Nagram::Media::KeepOverflowFaved(session, removing)) {
+	if (Ikk::Media::KeepOverflowFaved(session, removing)) {
 		return;
 	}
 	MaybeShowPremiumToast(
@@ -670,7 +670,7 @@ void Stickers::removeFromRecentSet(not_null<DocumentData*> document) {
 
 void Stickers::setIsNotFaved(not_null<DocumentData*> document) {
 	RemoveFromSet(setsRef(), document, FavedSetId);
-	Nagram::Media::RemoveLocalFaved(document);
+	Ikk::Media::RemoveLocalFaved(document);
 	session().local().writeFavedStickers();
 	notifyUpdated(StickersType::Stickers);
 }

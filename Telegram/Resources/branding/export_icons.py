@@ -1,4 +1,4 @@
-"""Renders the alternate Nagram icons from their Icon Composer sources.
+"""Renders the alternate Ikk icons from their Icon Composer sources.
 
 Run from the repository root on macOS with Xcode 26 or later:
     uv run --no-project --with pillow python \
@@ -18,15 +18,15 @@ ICTOOL = pathlib.Path(
     '/Contents/Executables/ictool')
 SIZE = 512
 ICONS = {
-    'NagramBlock': 'block',
-    'NagramBlockBlack': 'block_black',
-    'NagramBlockBlue': 'block_blue',
-    'NagramBlockNiello': 'block_niello',
-    'NagramBlockPurple': 'block_purple',
-    'NagramClassic': 'classic',
-    'NagramColorful': 'colorful',
-    'NagramCyan': 'cyan',
-    'NagramBlack': 'black',
+    'IkkBlock': 'block',
+    'IkkBlockBlack': 'block_black',
+    'IkkBlockBlue': 'block_blue',
+    'IkkBlockNiello': 'block_niello',
+    'IkkBlockPurple': 'block_purple',
+    'IkkClassic': 'classic',
+    'IkkColorful': 'colorful',
+    'IkkCyan': 'cyan',
+    'IkkBlack': 'black',
 }
 RENDITIONS = {'Default': '', 'Dark': '_dark'}
 
@@ -59,7 +59,7 @@ def main():
     if not ICTOOL.exists():
         sys.exit(f'ictool not found at {ICTOOL}')
     branding = pathlib.Path(__file__).resolve().parent
-    output = branding.parent / 'nagram' / 'icons'
+    output = branding.parent / 'ikk' / 'icons'
     output.mkdir(parents=True, exist_ok=True)
     for name, identifier in ICONS.items():
         source = branding / f'{name}.icon'

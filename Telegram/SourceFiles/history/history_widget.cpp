@@ -123,13 +123,13 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/view/controls/history_view_voice_record_bar.h"
 #include "history/view/controls/history_view_webpage_processor.h"
 #include "history/view/reactions/history_view_reactions_button.h"
-#include "nagram/compose/buttons.h"
-#include "nagram/compose/channel.h"
-#include "nagram/compose/confirm.h"
-#include "nagram/compose/format_toolbar.h"
-#include "nagram/compose/placeholder.h"
-#include "nagram/links/inline_bot.h"
-#include "nagram/chats/reading_position.h"
+#include "ikk/compose/buttons.h"
+#include "ikk/compose/channel.h"
+#include "ikk/compose/confirm.h"
+#include "ikk/compose/format_toolbar.h"
+#include "ikk/compose/placeholder.h"
+#include "ikk/links/inline_bot.h"
+#include "ikk/chats/reading_position.h"
 #include "history/view/history_view_chat_section.h"
 #include "history/view/history_view_cursor_state.h"
 #include "history/view/history_view_service_message.h"
@@ -464,7 +464,7 @@ HistoryWidget::HistoryWidget(
 	_botStart->addClickHandler([=] { sendBotStartCommand(); });
 	_joinChannel->addClickHandler([=] { joinChannel(); });
 	_muteUnmute->addClickHandler([=] {
-		if (!Nagram::Compose::OpenDiscussion(controller, _peer)) {
+		if (!Ikk::Compose::OpenDiscussion(controller, _peer)) {
 			toggleMuteUnmute();
 		}
 	});
@@ -577,7 +577,7 @@ HistoryWidget::HistoryWidget(
 		return false;
 	});
 	InitMessageFieldFade(_field, st::historyComposeField.textBg);
-	Nagram::Compose::SetupFormatToolbar(_field, this);
+	Ikk::Compose::SetupFormatToolbar(_field, this);
 
 	setupFastButtonMode();
 	initAiButton();
@@ -675,7 +675,7 @@ HistoryWidget::HistoryWidget(
 	session().attachWebView().requestBots();
 	rpl::merge(
 		session().attachWebView().attachBotsUpdates(),
-		Nagram::ForDevice().Value(Nagram::Compose::kDisableAttachHover
+		Ikk::ForDevice().Value(Ikk::Compose::kDisableAttachHover
 		) | rpl::skip(1) | rpl::to_empty,
 		session().changes().peerUpdates(
 			Data::PeerUpdate::Flag::Rights
@@ -692,7 +692,7 @@ HistoryWidget::HistoryWidget(
 	_botCommandStart->addClickHandler([=] { startBotCommand(); });
 
 	_topShadow->hide();
-	Nagram::Compose::ButtonsChanged(
+	Ikk::Compose::ButtonsChanged(
 	) | rpl::on_next([=] {
 		updateNotifyControls();
 		updateCmdStartShown();
@@ -2124,7 +2124,7 @@ void HistoryWidget::applyInlineBotQuery(UserData *bot, const QString &query) {
 			_inlineBot = bot;
 			_inlineLookingUpBot = false;
 			inlineBotChanged();
-		} else if (Nagram::Links::AutoInlineBotEnabled()) {
+		} else if (Ikk::Links::AutoInlineBotEnabled()) {
 			inlineBotChanged();
 		}
 		if (!_inlineResults) {
@@ -3364,7 +3364,7 @@ void HistoryWidget::showHistory(
 		refreshSendGiftToggle();
 		refreshSendAsToggle();
 
-		_showAtMsgId = Nagram::Chats::RestoreReadingPosition(
+		_showAtMsgId = Ikk::Chats::RestoreReadingPosition(
 			_history,
 			_showAtMsgId);
 		if (_showAtMsgId == ShowAtUnreadMsgId) {
@@ -3652,8 +3652,8 @@ void HistoryWidget::refreshAttachBotsMenu() {
 	_attachBotsMenu->setOrigin(
 		Ui::PanelAnimation::Origin::BottomLeft);
 	if (!ChatHelpers::ShowPanelOnClick()
-		&& !Nagram::Compose::Hidden(
-			Nagram::Compose::kDisableAttachHover)) {
+		&& !Ikk::Compose::Hidden(
+			Ikk::Compose::kDisableAttachHover)) {
 		_attachToggle->installEventFilter(_attachBotsMenu.get());
 	}
 	_attachBotsMenu->heightValue(
@@ -3838,7 +3838,7 @@ void HistoryWidget::updateNotifyControls() {
 		return;
 	}
 
-	_muteUnmute->setText(Nagram::Compose::ChannelBottomText(_peer, _history->muted()
+	_muteUnmute->setText(Ikk::Compose::ChannelBottomText(_peer, _history->muted()
 		? tr::lng_channel_unmute(tr::now)
 		: tr::lng_channel_mute(tr::now)).toUpper());
 	if (!session().data().notifySettings().silentPostsUnknown(_peer)) {
@@ -3942,7 +3942,7 @@ void HistoryWidget::refreshSendGiftToggle() {
 		| Type::Limited
 		| Type::Unique;
 	const auto has = user
-		&& !Nagram::Compose::Hidden(Nagram::Compose::kHideGiftButton)
+		&& !Ikk::Compose::Hidden(Ikk::Compose::kHideGiftButton)
 		&& _canSendMessages
 		&& !user->isServiceUser()
 		&& !user->isSelf()
@@ -4268,15 +4268,15 @@ void HistoryWidget::updateControlsVisibility() {
 			_botCommandStart->hide();
 		} else if (_kbReplyTo) {
 			_kbScroll->hide();
-			_tabbedSelectorToggle->setVisible(!Nagram::Compose::Hidden(
-				Nagram::Compose::kHideEmojiButton));
+			_tabbedSelectorToggle->setVisible(!Ikk::Compose::Hidden(
+				Ikk::Compose::kHideEmojiButton));
 			_botKeyboardHide->hide();
 			_botKeyboardShow->hide();
 			_botCommandStart->hide();
 		} else {
 			_kbScroll->hide();
-			_tabbedSelectorToggle->setVisible(!Nagram::Compose::Hidden(
-				Nagram::Compose::kHideEmojiButton));
+			_tabbedSelectorToggle->setVisible(!Ikk::Compose::Hidden(
+				Ikk::Compose::kHideEmojiButton));
 			_botKeyboardHide->hide();
 			if (_keyboard->hasMarkup()) {
 				_botKeyboardShow->show();
@@ -4290,8 +4290,8 @@ void HistoryWidget::updateControlsVisibility() {
 			_replaceMedia->show();
 			_attachToggle->hide();
 		} else {
-			_attachToggle->setVisible(!Nagram::Compose::Hidden(
-				Nagram::Compose::kHideAttachButton));
+			_attachToggle->setVisible(!Ikk::Compose::Hidden(
+				Ikk::Compose::kHideAttachButton));
 		}
 		if (_botMenu.button) {
 			_botMenu.button->show();
@@ -4346,8 +4346,8 @@ void HistoryWidget::updateControlsVisibility() {
 			}
 		}
 		if (_sendAs) {
-			_sendAs->setVisible(!Nagram::Compose::Hidden(
-				Nagram::Compose::kHideSendAsButton));
+			_sendAs->setVisible(!Ikk::Compose::Hidden(
+				Ikk::Compose::kHideSendAsButton));
 		}
 		updateFieldPlaceholder();
 
@@ -5711,7 +5711,7 @@ void HistoryWidget::send(Api::SendOptions options) {
 	if (_voiceRecordBar->isListenState()) {
 		_voiceRecordBar->requestToSendWithOptions(options);
 		return;
-	} else if (Nagram::Compose::TranslateBeforeSend(
+	} else if (Ikk::Compose::TranslateBeforeSend(
 			controller()->uiShow(),
 			_history->peer,
 			_field,
@@ -6493,7 +6493,7 @@ void HistoryWidget::sendBotCommand(
 	}
 	if (!request.replyTo
 		&& _canSendTexts
-		&& Nagram::ForDevice().Get(Nagram::Compose::kBotCommandsToDraft)) {
+		&& Ikk::ForDevice().Get(Ikk::Compose::kBotCommandsToDraft)) {
 		insertBotCommand(Bot::WrapCommandInChat(
 			_peer, request.command, request.context));
 		setInnerFocus();
@@ -6743,7 +6743,7 @@ bool HistoryWidget::isChoosingTheme() const {
 
 bool HistoryWidget::isMuteUnmute() const {
 	return _peer
-		&& Nagram::Compose::ChannelBottomVisible(_peer)
+		&& Ikk::Compose::ChannelBottomVisible(_peer)
 		&& ((_peer->isBroadcast() && !_peer->asChannel()->canPostMessages())
 			|| (_peer->isGigagroup() && !Data::CanSendAnything(_peer))
 			|| _peer->isRepliesChat()
@@ -6755,7 +6755,7 @@ bool HistoryWidget::isSearching() const {
 }
 
 bool HistoryWidget::showRecordButton() const {
-	return !Nagram::Compose::Hidden(Nagram::Compose::kHideRecordingButton)
+	return !Ikk::Compose::Hidden(Ikk::Compose::kHideRecordingButton)
 		&& (_recordAvailability != Webrtc::RecordAvailability::None)
 		&& !_voiceRecordBar->isListenState()
 		&& !_voiceRecordBar->isRecordingByAnotherBar()
@@ -6768,7 +6768,7 @@ bool HistoryWidget::showRecordButton() const {
 bool HistoryWidget::showInlineBotCancel() const {
 	return _inlineBot
 		&& !_inlineLookingUpBot
-		&& !Nagram::Links::AutomaticInlineQuery(_field);
+		&& !Ikk::Links::AutomaticInlineQuery(_field);
 }
 
 bool HistoryWidget::showStopButton() const {
@@ -6861,7 +6861,7 @@ bool HistoryWidget::updateCmdStartShown() {
 		? _peer->asUser()
 		: nullptr;
 	auto cmdStartShown = false;
-	if (!Nagram::Compose::Hidden(Nagram::Compose::kHideBotCommandButton)
+	if (!Ikk::Compose::Hidden(Ikk::Compose::kHideBotCommandButton)
 		&& _history
 		&& _peer
 		&& (false
@@ -6881,7 +6881,7 @@ bool HistoryWidget::updateCmdStartShown() {
 	constexpr auto kSmallMenuAfter = 10;
 	const auto commandsChanged = (_cmdStartShown != cmdStartShown);
 	auto buttonChanged = false;
-	if (Nagram::Compose::Hidden(Nagram::Compose::kHideBotMenu)
+	if (Ikk::Compose::Hidden(Ikk::Compose::kHideBotMenu)
 		|| !bot
 		|| (bot->botInfo->botMenuButtonUrl.isEmpty()
 			&& bot->botInfo->commands.empty())) {
@@ -7142,8 +7142,8 @@ void HistoryWidget::toggleKeyboard(bool manual) {
 	if (_botKeyboardHide->isHidden()
 		&& canWriteMessage()
 		&& !_showAnimation) {
-		_tabbedSelectorToggle->setVisible(!Nagram::Compose::Hidden(
-			Nagram::Compose::kHideEmojiButton));
+		_tabbedSelectorToggle->setVisible(!Ikk::Compose::Hidden(
+			Ikk::Compose::kHideEmojiButton));
 	} else {
 		_tabbedSelectorToggle->hide();
 	}
@@ -7318,7 +7318,7 @@ bool HistoryWidget::textExceedsMaxSize() const {
 }
 
 void HistoryWidget::updateAiButtonVisibility() {
-	const auto hidden = Nagram::Compose::Hidden(Nagram::Compose::kHideAiButton)
+	const auto hidden = Ikk::Compose::Hidden(Ikk::Compose::kHideAiButton)
 		|| !hasEnoughLinesForAi()
 		|| !_send->isVisible()
 		|| !_field->isVisible();
@@ -7719,7 +7719,7 @@ void HistoryWidget::updateFieldPlaceholder() {
 			} else if (channel->adminRights() & ChatAdminRight::Anonymous) {
 				return tr::lng_send_anonymous_ph();
 			} else {
-				return Nagram::Compose::InputPlaceholder(peer);
+				return Ikk::Compose::InputPlaceholder(peer);
 			}
 		} else if (const auto user = peer->asUser()) {
 			if (const auto &info = user->botInfo) {
@@ -7727,9 +7727,9 @@ void HistoryWidget::updateFieldPlaceholder() {
 					return tr::lng_bot_off_thread_ph();
 				}
 			}
-			return Nagram::Compose::InputPlaceholder(peer);
+			return Ikk::Compose::InputPlaceholder(peer);
 		} else {
-			return Nagram::Compose::InputPlaceholder(peer);
+			return Ikk::Compose::InputPlaceholder(peer);
 		}
 	}());
 	updateSendButtonType();
@@ -8873,8 +8873,8 @@ void HistoryWidget::updateBotKeyboard(History *h, bool force) {
 					showKeyboardHideButton();
 				} else {
 					_kbScroll->hide();
-					_tabbedSelectorToggle->setVisible(!Nagram::Compose::Hidden(
-						Nagram::Compose::kHideEmojiButton));
+					_tabbedSelectorToggle->setVisible(!Ikk::Compose::Hidden(
+						Ikk::Compose::kHideEmojiButton));
 					_botKeyboardHide->hide();
 				}
 				_botKeyboardShow->hide();
@@ -8898,8 +8898,8 @@ void HistoryWidget::updateBotKeyboard(History *h, bool force) {
 		} else {
 			if (!_showAnimation) {
 				_kbScroll->hide();
-				_tabbedSelectorToggle->setVisible(!Nagram::Compose::Hidden(
-					Nagram::Compose::kHideEmojiButton));
+				_tabbedSelectorToggle->setVisible(!Ikk::Compose::Hidden(
+					Ikk::Compose::kHideEmojiButton));
 				_botKeyboardHide->hide();
 				_botKeyboardShow->show();
 				_botCommandStart->hide();
@@ -8918,8 +8918,8 @@ void HistoryWidget::updateBotKeyboard(History *h, bool force) {
 	} else {
 		if (!_scroll->isHidden()) {
 			_kbScroll->hide();
-			_tabbedSelectorToggle->setVisible(!Nagram::Compose::Hidden(
-				Nagram::Compose::kHideEmojiButton));
+			_tabbedSelectorToggle->setVisible(!Ikk::Compose::Hidden(
+				Ikk::Compose::kHideEmojiButton));
 			_botKeyboardHide->hide();
 			_botKeyboardShow->hide();
 			_botCommandStart->setVisible(!_editMsgId);
@@ -9405,7 +9405,7 @@ void HistoryWidget::sendInlineResult(InlineBots::ResultSelected result) {
 	if (!checked) {
 		return;
 	}
-	if (Nagram::Compose::ConfirmBeforeSend(
+	if (Ikk::Compose::ConfirmBeforeSend(
 			controller()->uiShow(),
 			result.result->document(),
 			crl::guard(this, [=] { sendInlineResult(result); }))) {
@@ -9724,7 +9724,7 @@ Ui::PinnedBar *HistoryWidget::visiblePinnedBar() const {
 }
 
 void HistoryWidget::checkMessagesTTL() {
-	if (Nagram::Compose::Hidden(Nagram::Compose::kHideAutoDeleteButton)
+	if (Ikk::Compose::Hidden(Ikk::Compose::kHideAutoDeleteButton)
 		|| !_peer || !_peer->messagesTTL()) {
 		if (_ttlInfo) {
 			_ttlInfo = nullptr;
@@ -10073,7 +10073,7 @@ bool HistoryWidget::sendExistingDocument(
 			return false;
 		}
 	}
-	if (Nagram::Compose::ConfirmBeforeSend(
+	if (Ikk::Compose::ConfirmBeforeSend(
 			controller()->uiShow(),
 			document,
 			crl::guard(this, [=] {

@@ -6,7 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "dialogs/dialogs_quick_action.h"
-#include "nagram/chats/local_pins.h"
+#include "ikk/chats/local_pins.h"
 
 #include "dialogs/ui/dialogs_quick_action_context.h"
 #include "apiwrap.h"
@@ -115,7 +115,7 @@ void PerformQuickDialogAction(
 		});
 	} else if (action == Dialogs::Ui::QuickDialogAction::Pin) {
 		const auto entry = (Dialogs::Entry*)(history);
-		const auto isPinned = Nagram::Chats::ShowsPinnedIcon(entry, filterId);
+		const auto isPinned = Ikk::Chats::ShowsPinnedIcon(entry, filterId);
 		const auto onToggled = isPinned
 			? Fn<void()>(nullptr)
 			: [=] {
@@ -207,7 +207,7 @@ Ui::QuickDialogActionLabel ResolveQuickDialogLabel(
 			: Ui::QuickDialogActionLabel::Mute;
 	} else if (action == Dialogs::Ui::QuickDialogAction::Pin) {
 		const auto entry = (Dialogs::Entry*)(history);
-		return Nagram::Chats::ShowsPinnedIcon(entry, filterId)
+		return Ikk::Chats::ShowsPinnedIcon(entry, filterId)
 			? Ui::QuickDialogActionLabel::Unpin
 			: Ui::QuickDialogActionLabel::Pin;
 	} else if (action == Dialogs::Ui::QuickDialogAction::Read) {

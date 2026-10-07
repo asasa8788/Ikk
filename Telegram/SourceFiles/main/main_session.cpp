@@ -6,12 +6,12 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "main/main_session.h"
-#include "nagram/display/view_refresher.h"
-#include "nagram/core/diagnostics.h"
-#include "nagram/messages/badges.h"
-#include "nagram/media/sticker_export.h"
-#include "nagram/privacy/protection.h"
-#include "nagram/settings/cloud_sync.h"
+#include "ikk/display/view_refresher.h"
+#include "ikk/core/diagnostics.h"
+#include "ikk/messages/badges.h"
+#include "ikk/media/sticker_export.h"
+#include "ikk/privacy/protection.h"
+#include "ikk/settings/cloud_sync.h"
 
 #include "apiwrap.h"
 #include "api/api_peer_colors.h"
@@ -187,11 +187,11 @@ Session::Session(
 , _fastButtonsBots(std::make_unique<Support::FastButtonsBots>(this))
 , _saveSettingsTimer([=] { saveSettings(); }) {
 	Expects(_settings != nullptr);
-	Nagram::ViewRefresher::Attach(this);
-	Nagram::Media::StickerExport::Attach(this);
-	Nagram::Privacy::AttachSensitive(this);
-	Nagram::AttachCloudSync(this);
-	Nagram::InstallRpcErrorObserver();
+	Ikk::ViewRefresher::Attach(this);
+	Ikk::Media::StickerExport::Attach(this);
+	Ikk::Privacy::AttachSensitive(this);
+	Ikk::AttachCloudSync(this);
+	Ikk::InstallRpcErrorObserver();
 
 	_api->requestTermsUpdate();
 	_api->requestFullPeer(_user);
@@ -370,7 +370,7 @@ bool Session::premiumPossible() const {
 }
 
 bool Session::premiumBadgesShown() const {
-	return Nagram::Messages::ShowPremiumBadges()
+	return Ikk::Messages::ShowPremiumBadges()
 		&& (supportMode() || premiumPossible());
 }
 

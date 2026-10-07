@@ -12,11 +12,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "base/options.h"
 #include "dialogs/ui/chat_search_in.h"
 #include "dialogs/ui/dialogs_stories_content.h"
-#include "nagram/chats/layout.h"
-#include "nagram/chats/options.h"
-#include "nagram/chats/folders.h"
-#include "nagram/chats/community.h"
-#include "nagram/core/options.h"
+#include "ikk/chats/layout.h"
+#include "ikk/chats/options.h"
+#include "ikk/chats/folders.h"
+#include "ikk/chats/community.h"
+#include "ikk/core/options.h"
 #include "dialogs/ui/dialogs_stories_list.h"
 #include "dialogs/ui/dialogs_suggestions.h"
 #include "dialogs/ui/dialogs_top_bar_suggestion_content.h"
@@ -1009,7 +1009,7 @@ void Widget::chosenRow(const ChosenRow &row) {
 			return nullptr;
 		}
 		const auto communityId = Data::PeerLinkedCommunityId(history->peer);
-		if (!communityId || Nagram::Chats::CommunityGroupingDisabled()) {
+		if (!communityId || Ikk::Chats::CommunityGroupingDisabled()) {
 			return nullptr;
 		}
 		const auto community = session().data().channel(communityId);
@@ -1709,7 +1709,7 @@ void Widget::setupMainMenuToggle() {
 }
 
 void Widget::setupStories() {
-	Nagram::ForDevice().Value(Nagram::Chats::kHideStories
+	Ikk::ForDevice().Value(Ikk::Chats::kHideStories
 	) | rpl::skip(1) | rpl::on_next([=] {
 		updateStoriesVisibility();
 	}, _stories->lifetime());
@@ -2869,7 +2869,7 @@ void Widget::updateStoriesVisibility() {
 	const auto pulledDown = _scroll->position().overscroll
 		< -st::dialogsFilterSkip;
 	const auto hiddenInstant = _showAnimation
-		|| Nagram::Chats::HideStories()
+		|| Ikk::Chats::HideStories()
 		|| _openedForum
 		|| _openedCommunity
 		|| (widthAnimation && !suggestionsAnimation)
@@ -3305,7 +3305,7 @@ bool Widget::search(bool inCache, SearchRequestDelay delay) {
 bool Widget::peerSearchRequired() const {
 	return _searchState.filterChatsList()
 		&& !_openedForum
-		&& !Nagram::Chats::GlobalSearchDisabled();
+		&& !Ikk::Chats::GlobalSearchDisabled();
 }
 
 bool Widget::searchForTopicsRequired(const QString &query) const {

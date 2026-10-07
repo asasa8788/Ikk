@@ -7,7 +7,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "boxes/filters/edit_filter_box.h"
 
-#include "nagram/chats/recent_chats.h"
+#include "ikk/chats/recent_chats.h"
 #include "apiwrap.h"
 #include "base/event_filter.h"
 #include "boxes/filters/edit_filter_chats_list.h"
@@ -161,9 +161,9 @@ void EditExceptions(
 		showLimitReached);
 	const auto rawController = controller.get();
 	if (include) {
-		rawController->nagramSetFolder(
+		rawController->ikkSetFolder(
 			rules.id(),
-			Nagram::Chats::RecentFolderEnabled(session, rules.id()));
+			Ikk::Chats::RecentFolderEnabled(session, rules.id()));
 	}
 	auto initBox = [=](not_null<PeerListBox*> box) {
 		box->setCloseByOutsideClick(false);
@@ -200,10 +200,10 @@ void EditExceptions(
 				std::move(pinned),
 				include ? std::move(removeFrom) : std::move(changed));
 			if (include) {
-				Nagram::Chats::SetRecentFolderEnabled(
+				Ikk::Chats::SetRecentFolderEnabled(
 					session,
 					rules.id(),
-					rawController->nagramRecentChosen());
+					rawController->ikkRecentChosen());
 			}
 			updateDefaultTitle(computed);
 			*data = computed;

@@ -7,7 +7,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "data/data_document.h"
 
-#include "nagram/media/cover.h"
+#include "ikk/media/cover.h"
 #include "data/data_document_resolver.h"
 #include "data/data_session.h"
 #include "data/data_streaming.h"
@@ -1525,7 +1525,7 @@ void DocumentData::refreshPossibleCoverThumbnail() {
 	const auto size = kDefaultCoverThumbnailSize;
 	const auto location = ImageWithLocation{
 		.location = ImageLocation(
-			Nagram::Media::CoverLocation(
+			Ikk::Media::CoverLocation(
 				this,
 				{ AudioAlbumThumbLocation{ id } }),
 			size,

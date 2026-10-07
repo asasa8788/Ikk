@@ -6,8 +6,8 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "media/view/media_view_overlay_widget.h"
-#include "nagram/media/options.h"
-#include "nagram/privacy/protection.h"
+#include "ikk/media/options.h"
+#include "ikk/privacy/protection.h"
 
 #include "apiwrap.h"
 #include "api/api_attached_stickers.h"
@@ -1456,7 +1456,7 @@ bool OverlayWidget::hasCopyMediaRestriction(bool skipPremiumCheck) const {
 			? !story->canDownloadIfPremium()
 			: !story->canDownloadChecked();
 	}
-	return (_history && !Nagram::Privacy::AllowsCopy(_history->peer))
+	return (_history && !Ikk::Privacy::AllowsCopy(_history->peer))
 		|| (_message && _message->forbidsSaving());
 }
 
@@ -1495,7 +1495,7 @@ bool OverlayWidget::streamingRequiresControls() const {
 		&& _document
 		&& (!_document->isAnimation()
 			|| _document->isVideoMessage()
-			|| Nagram::ForDevice().Get(Nagram::Media::kGifPlaybackControls));
+			|| Ikk::ForDevice().Get(Ikk::Media::kGifPlaybackControls));
 }
 
 QImage OverlayWidget::videoFrame() const {
@@ -6087,7 +6087,7 @@ bool OverlayWidget::contentNeedsScreenshotProtection() const {
 	if (const auto story = _stories ? _stories->story() : nullptr) {
 		return story->forbidsForward();
 	}
-	return (_history && !Nagram::Privacy::AllowsCopy(_history->peer))
+	return (_history && !Ikk::Privacy::AllowsCopy(_history->peer))
 		|| (_message && _message->forbidsSaving());
 }
 

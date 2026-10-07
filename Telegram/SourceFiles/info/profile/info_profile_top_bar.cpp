@@ -6,7 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "info/profile/info_profile_top_bar.h"
-#include "nagram/privacy/options.h"
+#include "ikk/privacy/options.h"
 
 #include "api/api_peer_colors.h"
 #include "api/api_peer_photo.h"
@@ -529,14 +529,14 @@ TopBar::TopBar(
 				_peer,
 				Data::PeerUpdate::Flag::FullInfo
 					| Data::PeerUpdate::Flag::ChannelAmIn) | rpl::to_empty,
-			Nagram::ForDevice().Value(
-				Nagram::Privacy::kHideProfileGifts) | rpl::to_empty
+			Ikk::ForDevice().Value(
+				Ikk::Privacy::kHideProfileGifts) | rpl::to_empty
 		) | rpl::on_next([=] {
 			setupActions(controller);
 		}, lifetime());
 	}
-	Nagram::ForDevice().Value(
-		Nagram::Privacy::kHideProfileGifts
+	Ikk::ForDevice().Value(
+		Ikk::Privacy::kHideProfileGifts
 	) | rpl::on_next([=](bool hidden) {
 		for (auto &gift : _pinnedToTopGifts) {
 			gift.button->setVisible(!hidden);
@@ -1213,8 +1213,8 @@ void TopBar::setupActions(not_null<Window::SessionController*> controller) {
 			&& (channel->isForbidden()
 				|| !channel->stargiftsAvailable()
 				|| channel->amCreator())) {
-		} else if (!Nagram::ForDevice().Get(
-			Nagram::Privacy::kHideProfileGifts)) {
+		} else if (!Ikk::ForDevice().Get(
+			Ikk::Privacy::kHideProfileGifts)) {
 			const auto giftButton = Ui::CreateChild<TopBarActionButton>(
 				this,
 				tr::lng_profile_action_short_gift(tr::now),
@@ -3531,8 +3531,8 @@ void TopBar::setupNewGifts(
 
 			return base;
 		}());
-		entry.button->setVisible(!Nagram::ForDevice().Get(
-			Nagram::Privacy::kHideProfileGifts));
+		entry.button->setVisible(!Ikk::ForDevice().Get(
+			Ikk::Privacy::kHideProfileGifts));
 
 		entry.button->setClickedCallback([=, giftData = gift, peer = _peer] {
 			::Settings::ShowSavedStarGiftBox(controller, peer, giftData);
@@ -3666,7 +3666,7 @@ void TopBar::paintPinnedToTopGifts(
 		const QRect &userpicRect) {
 	if (_pinnedToTopGifts.empty()
 		|| _source == Source::Preview
-		|| Nagram::ForDevice().Get(Nagram::Privacy::kHideProfileGifts)) {
+		|| Ikk::ForDevice().Get(Ikk::Privacy::kHideProfileGifts)) {
 		return;
 	}
 

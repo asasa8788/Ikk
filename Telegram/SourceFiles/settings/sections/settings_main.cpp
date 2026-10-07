@@ -7,8 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "settings/sections/settings_main.h"
 
-#include "nagram/settings/home.h"
-#include "nagram/chats/promotions.h"
+#include "ikk/settings/home.h"
+#include "ikk/chats/promotions.h"
 
 #include "settings/settings_common_session.h"
 
@@ -366,7 +366,7 @@ void Cover::refreshQrButtonGeometry(int newWidth) {
 }
 
 void BuildSectionButtons(SectionBuilder &builder) {
-	Nagram::AddSettingsEntry(builder);
+	Ikk::AddSettingsEntry(builder);
 	const auto session = builder.session();
 	const auto controller = builder.controller();
 	const auto showOther = builder.showOther();
@@ -838,7 +838,7 @@ void SetupValidatePhoneNumberSuggestion(
 		not_null<Window::SessionController*> controller,
 		not_null<Ui::VerticalLayout*> container,
 		Fn<void(Type)> showOther) {
-	if (Nagram::Chats::HidePhoneSuggestion()
+	if (Ikk::Chats::HidePhoneSuggestion()
 		|| !controller->session().promoSuggestions().current(
 			kSugValidatePhone.utf8())) {
 		return;

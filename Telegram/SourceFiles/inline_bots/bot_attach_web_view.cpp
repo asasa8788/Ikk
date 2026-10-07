@@ -7,7 +7,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "inline_bots/bot_attach_web_view.h"
 
-#include "nagram/links/behavior.h"
+#include "ikk/links/behavior.h"
 #include "api/api_blocked_peers.h"
 #include "api/api_common.h"
 #include "api/api_sending.h"
@@ -1224,7 +1224,7 @@ void WebViewInstance::requestButton() {
 		MTP_bytes(_button.url),
 		MTP_string(_button.startCommand),
 		MTP_dataJSON(MTP_bytes(botThemeParams().json)),
-		MTP_string(Nagram::Links::WebAppPlatform(_bot)),
+		MTP_string(Ikk::Links::WebAppPlatform(_bot)),
 		action.mtpReplyTo(),
 		(action.options.sendAs
 			? action.options.sendAs->input()
@@ -1259,7 +1259,7 @@ void WebViewInstance::requestSimple() {
 		MTP_bytes(_button.url),
 		MTP_string(_button.startCommand),
 		MTP_dataJSON(MTP_bytes(botThemeParams().json)),
-		MTP_string(Nagram::Links::WebAppPlatform(_bot))
+		MTP_string(Ikk::Links::WebAppPlatform(_bot))
 	)).done([=](const MTPWebViewResult &result) {
 		show({
 			.result = ParseWebViewResult(result),
@@ -1287,7 +1287,7 @@ void WebViewInstance::requestMain() {
 		_bot->inputUser(),
 		MTP_string(_button.startCommand),
 		MTP_dataJSON(MTP_bytes(botThemeParams().json)),
-		MTP_string(Nagram::Links::WebAppPlatform(_bot))
+		MTP_string(Ikk::Links::WebAppPlatform(_bot))
 	)).done([=](const MTPWebViewResult &result) {
 		show({
 			.result = ParseWebViewResult(result),
@@ -1315,7 +1315,7 @@ void WebViewInstance::requestApp(bool allowWrite) {
 		MTP_inputBotAppID(MTP_long(app->id), MTP_long(app->accessHash)),
 		MTP_string(_appStartParam),
 		MTP_dataJSON(MTP_bytes(botThemeParams().json)),
-		MTP_string(Nagram::Links::WebAppPlatform(_bot))
+		MTP_string(Ikk::Links::WebAppPlatform(_bot))
 	)).done([=](const MTPWebViewResult &result) {
 		_requestId = 0;
 		show({
@@ -1338,7 +1338,7 @@ void WebViewInstance::requestChatJoin() {
 		MTP_flags(Flag::f_theme_params),
 		MTP_long(join.queryId),
 		MTP_dataJSON(MTP_bytes(botThemeParams().json)),
-		MTP_string(Nagram::Links::WebAppPlatform(_bot))
+		MTP_string(Ikk::Links::WebAppPlatform(_bot))
 	)).done([=](const MTPWebViewResult &result) {
 		_requestId = 0;
 		show({
@@ -1607,7 +1607,7 @@ bool WebViewInstance::botHandleLocalUri(QString uri, bool keepOpen) {
 		&& !local.startsWith(u"tonsite://"_q, Qt::CaseInsensitive)
 		&& !local.startsWith(u"ton://"_q, Qt::CaseInsensitive)) {
 		return !keepOpen
-			&& Nagram::Links::OpenOutsideWebview(uri, _panelUrl);
+			&& Ikk::Links::OpenOutsideWebview(uri, _panelUrl);
 	}
 	const auto bot = _bot;
 	const auto context = std::make_shared<WebViewContext>(_context);

@@ -22,7 +22,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "mtproto/mtproto_config.h"
 #include "mtproto/proxy_check.h"
 #include "mtproto/web_proxy/web_proxy_transport.h"
-#include "nagram/network/runtime.h"
+#include "ikk/network/runtime.h"
 #include "qr/qr_generate.h"
 #include "settings/settings_common.h"
 #include "storage/localstorage.h"
@@ -2044,7 +2044,7 @@ void ProxiesBoxController::ShowApplyConfirmation(
 				MTP::StartProxyCheck(
 					&account->mtp(),
 					proxy,
-					Nagram::Network::UseIPv6(
+					Ikk::Network::UseIPv6(
 						Core::App().settings().proxy().tryIPv6()),
 					state->v4,
 					state->v6,
@@ -2165,7 +2165,7 @@ void ProxiesBoxController::refreshChecker(Item &item) {
 	MTP::StartProxyCheck(
 		&_account->mtp(),
 		item.data,
-		Nagram::Network::UseIPv6(Core::App().settings().proxy().tryIPv6()),
+		Ikk::Network::UseIPv6(Core::App().settings().proxy().tryIPv6()),
 		item.checker,
 		item.checkerv6,
 		[=](Connection *raw, int pingTime) {

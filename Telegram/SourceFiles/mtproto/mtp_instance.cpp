@@ -27,7 +27,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "base/timer.h"
 #include "base/network_reachability.h"
 #include "test/test_rpc_retry.h"
-#include "nagram/network/runtime.h"
+#include "ikk/network/runtime.h"
 
 namespace MTP {
 namespace {
@@ -396,7 +396,7 @@ void Instance::Private::resolveProxyDomain(const QString &host) {
 				const QString &host,
 				const QStringList &ips,
 				crl::time expireAt) {
-			applyDomainIps(host, Nagram::Network::OrderIps(ips), expireAt);
+			applyDomainIps(host, Ikk::Network::OrderIps(ips), expireAt);
 		});
 	}
 	_domainResolver->resolve(host);

@@ -13,8 +13,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "base/unixtime.h"
 #include "base/openssl_help.h"
 #include "base/call_delayed.h"
-#include "nagram/network/model.h"
-#include "nagram/network/runtime.h"
+#include "ikk/network/model.h"
+#include "ikk/network/runtime.h"
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonArray>
@@ -233,7 +233,7 @@ SpecialConfigRequest::SpecialConfigRequest(
 				&& (attempt.type != Type::Mozilla);
 		}), _attempts.end());
 	}
-	if (const auto doh = Nagram::Network::CustomDoh(); !doh.isEmpty()) {
+	if (const auto doh = Ikk::Network::CustomDoh(); !doh.isEmpty()) {
 		_attempts.erase(ranges::remove_if(_attempts, [](
 				const Attempt &attempt) {
 			return (attempt.type == Type::Google)
@@ -296,7 +296,7 @@ void SpecialConfigRequest::performRequest(const Attempt &attempt) {
 	auto payload = QByteArray();
 	switch (type) {
 	case Type::Mozilla: {
-		Nagram::Network::SetDohEndpoint(url, attempt.data);
+		Ikk::Network::SetDohEndpoint(url, attempt.data);
 		url.setQuery(u"name=%1&type=16&random_padding=%2"_q.arg(
 			_domainString,
 			GenerateDnsRandomPadding()));
@@ -419,7 +419,7 @@ QByteArray SpecialConfigRequest::finalizeRequest(
 			).arg(reply->error()));
 	}
 	const auto result = reply->readAll();
-	Nagram::Network::CheckDohReply(reply, result);
+	Ikk::Network::CheckDohReply(reply, result);
 	const auto from = ranges::remove(
 		_requests,
 		reply,

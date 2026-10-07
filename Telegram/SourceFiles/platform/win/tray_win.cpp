@@ -7,7 +7,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "platform/win/tray_win.h"
 
-#include "nagram/interface/app_icon.h"
+#include "ikk/interface/app_icon.h"
 #include "base/invoke_queued.h"
 #include "base/qt_signal_producer.h"
 #include "core/application.h"
@@ -92,7 +92,7 @@ bool DarkTasbarValueValid/* = false*/;
 	auto hq = PainterHighQualityEnabler(p);
 	p.setBrush(color);
 	p.setPen(Qt::NoPen);
-	p.drawEllipse(Nagram::Interface::TrayUnreadDot(image.size()));
+	p.drawEllipse(Ikk::Interface::TrayUnreadDot(image.size()));
 	return image;
 }
 
@@ -106,7 +106,7 @@ bool DarkTasbarValueValid/* = false*/;
 	static auto ScaledLogoDark = base::flat_map<int, QImage>();
 	static auto ScaledLogoLight = base::flat_map<int, QImage>();
 	static auto Generation = 0;
-	const auto generation = Nagram::Interface::AppIconGeneration();
+	const auto generation = Ikk::Interface::AppIconGeneration();
 	if (Generation != generation) {
 		Generation = generation;
 		ScaledLogo.clear();
@@ -274,7 +274,7 @@ void Tray::showTrayMessage() const {
 	if (!cSeenTrayTooltip() && _icon) {
 		_icon->showMessage(
 			AppName.utf16(),
-			tr::lng_nagram_tray_icon_text(tr::now),
+			tr::lng_ikk_tray_icon_text(tr::now),
 			QIcon(),
 			QPlatformSystemTrayIcon::Information,
 			kTooltipDelay);

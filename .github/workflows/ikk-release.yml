@@ -1,0 +1,346 @@
+name: Ikk Release.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to build and publish.
+        required: true
+        type: string
+      only:
+        description: >-
+          Platform to build, for trial runs; 'packages' builds nothing and
+          updates the package managers for a published release.
+        type: choice
+        default: all
+        options: [all, macos, windows, linux, packages]
+      windows_arch:
+        description: Windows architecture to build, for trial runs.
+        type: choice
+        default: all
+        options: [all, x64, arm64]
+
+jobs:
+
+  version:
+    name: Version
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+
+    steps:
+      - name: Clone.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+          sparse-checkout: |
+            Telegram/build
+            tools/ikk
+
+      - name: Check the tag against the version files.
+        run: |
+          # Tags made before the revision file existed cannot be checked.
+          if [ ! -f Telegram/build/ikk_version ]; then
+            echo "::notice::$TAG has no Telegram/build/ikk_version, its name is not checked."
+            exit 0
+          fi
+          python3 tools/ikk/release_version.py "$TAG"
+
+  macos:
+    needs: version
+    if: ${{ !inputs.only || inputs.only == 'all' || inputs.only == 'macos' }}
+    uses: ./.github/workflows/ikk-mac.yml
+    permissions:
+      contents: read
+      actions: write
+    with:
+      config: Release
+      ref: ${{ inputs.tag || github.ref_name }}
+    secrets: inherit
+
+  windows:
+    needs: version
+    if: ${{ !inputs.only || inputs.only == 'all' || inputs.only == 'windows' }}
+    uses: ./.github/workflows/ikk-win.yml
+    permissions:
+      contents: read
+      actions: write
+    with:
+      config: Release
+      ref: ${{ inputs.tag || github.ref_name }}
+      archs: ${{ inputs.windows_arch == 'x64' && '["x64"]' || inputs.windows_arch == 'arm64' && '["arm64"]' || '["x64","arm64"]' }}
+    secrets: inherit
+
+  linux:
+    needs: version
+    if: ${{ !inputs.only || inputs.only == 'all' || inputs.only == 'linux' }}
+    uses: ./.github/workflows/ikk-linux.yml
+    permissions:
+      contents: read
+      actions: write
+    with:
+      config: Release
+      ref: ${{ inputs.tag || github.ref_name }}
+    secrets: inherit
+
+  publish:
+    name: Publish
+    needs: [version, macos, windows, linux]
+    # A platform that fails must not block the packages that were built.
+    if: ${{ !cancelled() && needs.version.result == 'success' && inputs.only != 'packages' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Clone.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.TAG }}
+          sparse-checkout: |
+            docs/ikk/releases
+            Telegram/build
+            tools/ikk
+
+      - name: Download packages.
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: release-*
+          path: packages
+          merge-multiple: true
+
+      - name: Publish.
+        run: |
+          VERSION="${TAG#v}"
+          mkdir upload
+          for file in packages/*; do
+            name="$(basename "$file")"
+            mv "$file" "upload/${name/Ikk-/Ikk-$VERSION-}"
+          done
+          ls -l upload
+          test -n "$(ls upload)"
+
+          NOTES="docs/ikk/releases/$TAG.md"
+          test -f "$NOTES"
+
+          PRERELEASE=""
+          case "$TAG" in (*-*) PRERELEASE="--prerelease";; esac
+
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$TAG" upload/* --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" upload/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --verify-tag \
+              --title "Ikk Desktop $VERSION" \
+              --notes-file "$NOTES" \
+              $PRERELEASE
+          fi
+
+      # Installed copies read the feed of the 'updates' release, so it is
+      # written only after the packages it links to are published.
+      - name: Update the feed.
+        run: |
+          shopt -s nullglob
+          packages=(upload/td-update-*)
+          if [ ${#packages[@]} -eq 0 ]; then
+            echo "::notice::This run has no update packages, the update feed stays as it is."
+            exit 0
+          fi
+          if ! gh release view updates --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release create updates \
+              --repo "$GITHUB_REPOSITORY" \
+              --prerelease \
+              --title "Update feed" \
+              --notes "Installed copies of Ikk Desktop read ikk-updates.json from here to find new versions. Download the application from the other releases."
+          fi
+          mkdir feed
+          gh release download updates --repo "$GITHUB_REPOSITORY" \
+            --pattern ikk-updates.json --dir feed || true
+          python3 tools/ikk/update_feed.py \
+            --feed feed/ikk-updates.json --tag "$TAG" "${packages[@]}"
+          gh release upload updates feed/ikk-updates.json --clobber --repo "$GITHUB_REPOSITORY"
+
+  aur:
+    name: AUR
+    needs: [version, publish]
+    # Only stable releases go to the package managers.
+    if: ${{ !cancelled() && needs.version.result == 'success' && (needs.publish.result == 'success' || inputs.only == 'packages') && !contains(inputs.tag || github.ref_name, '-') }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+      AUR_SSH_KEY: ${{ secrets.AUR_SSH_KEY }}
+
+    steps:
+      - name: Clone.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+          sparse-checkout: |
+            Telegram/build
+            tools/ikk
+
+      - name: Publish ikk-desktop-bin.
+        run: |
+          if [ -z "$AUR_SSH_KEY" ]; then
+            echo "::notice::AUR_SSH_KEY is not set, the AUR package is not updated."
+            exit 0
+          fi
+          VERSION="${TAG#v}"
+          ARCHIVE="Ikk-$VERSION-linux-x86_64.tar.xz"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "$ARCHIVE" --dir release
+          python3 tools/ikk/aur_package.py --archive "release/$ARCHIVE" --out package
+
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$AUR_SSH_KEY" > ~/.ssh/aur
+          chmod 600 ~/.ssh/aur
+          # The key the AUR publishes on its home page, checked on 2026-10-04.
+          echo "aur.archlinux.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEuBKrPzbawxA/k2g6NcyV5jmqwJ2s+zpgZGZ7tpLIcN" > ~/.ssh/known_hosts
+          export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/aur -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+
+          # A package that does not exist yet clones as an empty repository
+          # and is created by the first push.
+          git clone ssh://aur@aur.archlinux.org/ikk-desktop-bin.git aur
+          cp package/PKGBUILD package/.SRCINFO aur/
+          cd aur
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "The AUR package already describes $VERSION."
+            exit 0
+          fi
+          git add PKGBUILD .SRCINFO
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Update to $VERSION"
+          git push origin HEAD:master
+
+  nix:
+    name: Nix
+    needs: [version, publish]
+    # Only stable releases go to the package managers.
+    if: ${{ !cancelled() && needs.version.result == 'success' && (needs.publish.result == 'success' || inputs.only == 'packages') && !contains(inputs.tag || github.ref_name, '-') }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: ${{ github.event.repository.default_branch }}
+
+    steps:
+      # The flake of the default branch names the release, not the tag itself.
+      - name: Clone.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.BRANCH }}
+
+      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+
+      - name: Name the release in the flake.
+        run: |
+          if [ ! -f tools/ikk/nix_release.py ]; then
+            echo "::notice::$BRANCH has no tools/ikk/nix_release.py, the Nix package is not updated."
+            exit 0
+          fi
+          VERSION="${TAG#v}"
+          ARCHIVE="Ikk-$VERSION-linux-x86_64.tar.xz"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "$ARCHIVE" --dir "$RUNNER_TEMP"
+          python3 tools/ikk/nix_release.py --archive "$RUNNER_TEMP/$ARCHIVE"
+          git add packaging/nix/release.json
+
+      # Nothing is pushed unless the package of this release builds and starts.
+      - name: Build and start the package.
+        run: |
+          if git diff --cached --quiet; then
+            echo "The Nix package already names this release."
+            exit 0
+          fi
+          # The package runs the binary under bubblewrap, which needs the
+          # user namespaces that the runner image restricts.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          # A program from Nix takes its OpenGL drivers from where NixOS links
+          # them; the runner is not NixOS, so the Mesa of the flake goes there.
+          MESA=$(nix --extra-experimental-features "nix-command flakes" build \
+            --no-link --print-out-paths --inputs-from . nixpkgs#mesa^out)
+          sudo ln -sfn "$MESA" /run/opengl-driver
+          nix --extra-experimental-features "nix-command flakes" build .#ikk-desktop
+          tools/ikk/retry.sh 3 30 sudo apt-get install -y -o Acquire::Retries=3 xvfb
+          xvfb-run -a python3 tools/ikk/smoke_test.py result/bin/Ikk
+
+      - name: Push the release file.
+        run: |
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "build(nix): package ${TAG#v}"
+          git push origin "HEAD:$BRANCH"
+
+  homebrew:
+    name: Homebrew
+    needs: [version, publish]
+    # Only stable releases go to the package managers.
+    if: ${{ !cancelled() && needs.version.result == 'success' && (needs.publish.result == 'success' || inputs.only == 'packages') && !contains(inputs.tag || github.ref_name, '-') }}
+    runs-on: macos-26
+    permissions:
+      contents: read
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+      TAP: ikk-dev/homebrew-tap
+      TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+    steps:
+      - name: Clone.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+          sparse-checkout: tools/ikk
+
+      - name: Publish the cask.
+        run: |
+          if [ -z "$TAP_TOKEN" ]; then
+            echo "::notice::HOMEBREW_TAP_TOKEN is not set, the cask is not updated."
+            exit 0
+          fi
+          VERSION="${TAG#v}"
+          ARCHIVE="Ikk-$VERSION-macos.zip"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "$ARCHIVE" --dir "$RUNNER_TEMP"
+
+          # Homebrew quarantines what it installs, so Gatekeeper must accept
+          # the application: only a notarized release goes to the tap.
+          ditto -x -k "$RUNNER_TEMP/$ARCHIVE" "$RUNNER_TEMP/unpacked"
+          if ! xcrun stapler validate "$RUNNER_TEMP/unpacked/Ikk.app"; then
+            echo "::warning::This release is not notarized, the cask is not updated."
+            exit 0
+          fi
+
+          GH_TOKEN="$TAP_TOKEN" gh repo clone "$TAP" tap
+          python3 tools/ikk/homebrew_cask.py \
+            --archive "$RUNNER_TEMP/$ARCHIVE" --out tap/Casks/ikk-desktop.rb
+          brew style tap/Casks/ikk-desktop.rb
+          cd tap
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "The cask already installs $VERSION."
+            exit 0
+          fi
+          git add Casks/ikk-desktop.rb
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "ikk-desktop $VERSION"
+          GH_TOKEN="$TAP_TOKEN" gh auth setup-git
+          GH_TOKEN="$TAP_TOKEN" git push origin HEAD

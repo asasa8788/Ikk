@@ -87,6 +87,6 @@
   </qresource>
   <qresource prefix="/misc">
     <file alias="default_shortcuts-custom.json">../../default_shortcuts-custom.json</file>
-    <file alias="xyz.nextalone.nagram.desktop.desktop">../../../../lib/xdg/xyz.nextalone.nagram.desktop.desktop</file>
+    <file alias="dev.ikk.desktop.desktop">../../../../lib/xdg/dev.ikk.desktop.desktop</file>
   </qresource>
 </RCC>

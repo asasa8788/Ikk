@@ -7,10 +7,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "chat_helpers/message_field.h"
 
-#include "nagram/compose/options.h"
-#include "nagram/compose/text.h"
-#include "nagram/links/inline_bot.h"
-#include "nagram/services/draft_translation.h"
+#include "ikk/compose/options.h"
+#include "ikk/compose/text.h"
+#include "ikk/links/inline_bot.h"
+#include "ikk/services/draft_translation.h"
 
 #include "history/history_widget.h"
 #include "history/history.h" // History::session
@@ -572,16 +572,16 @@ auto InitMessageFieldHandlers(MessageFieldHandlersArgs &&args)
 	}, [paused] {
 		return On(PowerSaving::kChatSpoiler) || paused();
 	});
-	Nagram::Compose::InstallFieldHooks(field);
+	Ikk::Compose::InstallFieldHooks(field);
 	if (args.show) {
-		Nagram::InstallDraftTranslation(field, args.show);
+		Ikk::InstallDraftTranslation(field, args.show);
 	}
 	field->setInstantReplaces(Ui::InstantReplaces::Default());
 	field->setInstantReplacesEnabled(
 		Core::App().settings().replaceEmojiValue(),
 		Core::App().settings().systemTextReplaceValue());
 	field->setMarkdownReplacesEnabled(
-		Nagram::ForDevice().Value(Nagram::Compose::kDisableAutoMarkdown)
+		Ikk::ForDevice().Value(Ikk::Compose::kDisableAutoMarkdown)
 		| rpl::map([
 			tags = std::move(args.allowMarkdownTags),
 			typed = args.allowTypedMarkdown,
@@ -940,7 +940,7 @@ InlineBotQuery ParseInlineBotQuery(
 		result.username = QString();
 	}
 	result.query = QString();
-	Nagram::Links::FillAutomaticInlineQuery(session, full, result);
+	Ikk::Links::FillAutomaticInlineQuery(session, full, result);
 	return result;
 }
 

@@ -1,0 +1,305 @@
+name: Ikk Linux.
+
+on:
+  push:
+    branches:
+      - ikk-next
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - 'changelog.txt'
+      - 'LEGAL'
+      - 'LICENSE'
+      - '.github/**'
+      - '!.github/workflows/ikk-linux.yml'
+      - 'snap/**'
+      - 'Telegram/build/**'
+      - '!Telegram/build/docker/centos_env/**'
+      - 'Telegram/Resources/uwp/**'
+      - 'Telegram/Resources/winrc/**'
+      - 'Telegram/SourceFiles/platform/win/**'
+      - 'Telegram/SourceFiles/platform/mac/**'
+      - 'Telegram/Telegram/**'
+      - 'Telegram/configure.bat'
+      - 'Telegram/Telegram.plist'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - 'changelog.txt'
+      - 'LEGAL'
+      - 'LICENSE'
+      - '.github/**'
+      - '!.github/workflows/ikk-linux.yml'
+      - 'snap/**'
+      - 'Telegram/build/**'
+      - '!Telegram/build/docker/centos_env/**'
+      - 'Telegram/Resources/uwp/**'
+      - 'Telegram/Resources/winrc/**'
+      - 'Telegram/SourceFiles/platform/win/**'
+      - 'Telegram/SourceFiles/platform/mac/**'
+      - 'Telegram/Telegram/**'
+      - 'Telegram/configure.bat'
+      - 'Telegram/Telegram.plist'
+
+  workflow_call:
+    inputs:
+      config:
+        type: string
+        default: Debug
+      ref:
+        type: string
+        default: ""
+
+jobs:
+
+  linux:
+    # A push whose commit message has a marker such as [linux-only] builds
+    # only the named platforms; several markers may be combined.
+    if: >-
+      inputs.config == 'Release'
+      || github.event_name != 'push'
+      || !contains(github.event.head_commit.message, '-only]')
+      || contains(github.event.head_commit.message, '[linux-only]')
+    name: Rocky Linux 8
+    runs-on: ubuntu-24.04
+
+    # Dropping superseded caches needs to delete them.
+    permissions:
+      contents: read
+      actions: write
+
+    strategy:
+      matrix:
+        defines:
+          - ""
+
+    env:
+      UPLOAD_ARTIFACT: "true"
+      ONLY_CACHE: "false"
+      IMAGE_TAG: tdesktop:centos_env
+      CONFIG: ${{ inputs.config || 'Debug' }}
+
+    steps:
+      - name: Clone.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+          ref: ${{ inputs.ref }}
+
+      - name: First set up.
+        env:
+          CCACHE_SHA256: 508b2a1217dc6e04a23e967c7b95a0fb45d8a7e16fde9e180919698f2e2be060
+        run: |
+          retry="$GITHUB_WORKSPACE/tools/ikk/retry.sh"
+          download=(curl -fsSL --retry 5 --retry-all-errors --retry-delay 10)
+          "$retry" 3 30 sudo apt-get update -o Acquire::Retries=3
+          # Saved to a file: piped into python3, a failed download went unnoticed.
+          "${download[@]}" -o "$RUNNER_TEMP/install-poetry.py" https://install.python-poetry.org
+          "$retry" 3 30 python3 "$RUNNER_TEMP/install-poetry.py" --version 2.5.1
+          "${download[@]}" -o "$RUNNER_TEMP/ccache.tar.xz" \
+            https://github.com/ccache/ccache/releases/download/v4.13.6/ccache-4.13.6-linux-x86_64-glibc.tar.xz
+          echo "$CCACHE_SHA256  $RUNNER_TEMP/ccache.tar.xz" | sha256sum -c -
+          sudo tar -xJf "$RUNNER_TEMP/ccache.tar.xz" -C /usr/local/bin --strip-components=1 \
+            ccache-4.13.6-linux-x86_64-glibc/ccache
+          echo "CCACHE_DIR=$RUNNER_TEMP/.tdesktop-cache" >> $GITHUB_ENV
+          cd Telegram/build/docker/centos_env
+          "$retry" 3 30 poetry install
+          DOCKERFILE=$(DEBUG= LTO= poetry run gen_dockerfile)
+          echo "$DOCKERFILE" > Dockerfile
+          rm -rf __pycache__
+
+      - name: Free up some disk space.
+        uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6
+        with:
+          tool-cache: true
+
+      - name: Set up Docker Buildx.
+        id: setup-buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Libraries cache.
+        id: cache-libs
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ${{ runner.temp }}/.buildx-cache
+            ${{ runner.temp }}/.mount-cache
+          key: ${{ runner.OS }}-libs-${{ hashFiles('Telegram/build/docker/centos_env/**') }}
+          restore-keys: ${{ runner.OS }}-libs-
+
+      - name: Restore Docker cache mounts.
+        uses: reproducible-containers/buildkit-cache-dance@5422eac04292c961a382e0f584ea0f03ad9da723
+        with:
+          builder: ${{ steps.setup-buildx.outputs.name }}
+          cache-dir: ${{ runner.temp }}/.mount-cache
+          dockerfile: Telegram/build/docker/centos_env/Dockerfile
+          skip-extraction: ${{ steps.cache-libs.outputs.cache-hit }}
+
+      - name: Libraries.
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: Telegram/build/docker/centos_env
+          load: ${{ env.ONLY_CACHE == 'false' }}
+          tags: ${{ env.IMAGE_TAG }}
+          cache-from: type=local,src=${{ runner.temp }}/.buildx-cache
+          cache-to: type=local,dest=${{ runner.temp }}/.buildx-cache-new,mode=max
+
+      - name: Move cache.
+        run: |
+          rm -rf ${{ runner.temp }}/.buildx-cache
+          mv ${{ runner.temp }}/.buildx-cache{-new,}
+
+      - name: Restore Telegram Desktop cache.
+        id: cache-tdesktop
+        if: env.ONLY_CACHE == 'false'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ runner.OS }}-tdesktop-${{ env.CONFIG == 'Release' && 'release-' || '' }}${{ matrix.defines || 'null' }}-${{ github.run_id }}
+          restore-keys: ${{ runner.OS }}-tdesktop-${{ env.CONFIG == 'Release' && 'release-' || '' }}${{ matrix.defines || 'null' }}-
+
+      - name: Ikk build.
+        if: env.ONLY_CACHE == 'false'
+        env:
+          IKK_API_ID: ${{ secrets.IKK_API_ID }}
+          IKK_API_HASH: ${{ secrets.IKK_API_HASH }}
+          # A Debug build reports every failing file in one run; a release
+          # stops at the first one.
+          KEEP_GOING: ${{ env.CONFIG == 'Debug' && '1' || '' }}
+        run: |
+          # Without the repository secrets, build with the test-only credentials.
+          API=""
+          if [ -z "$IKK_API_ID" ]; then
+            API="-D TDESKTOP_API_TEST=ON"
+          fi
+
+          DEFINE=""
+          if [ -n "${{ matrix.defines }}" ]; then
+            DEFINE="-D ${{ matrix.defines }}=ON"
+            echo Define from matrix: $DEFINE
+            echo "ARTIFACT_NAME=Ikk ${{ matrix.defines }}" >> $GITHUB_ENV
+          else
+            echo "ARTIFACT_NAME=Ikk" >> $GITHUB_ENV
+          fi
+
+          ccache -z
+          echo "CCACHE_BUILD_START=$(date +%s)" >> $GITHUB_ENV
+
+          docker run --rm \
+          -u $(id -u) \
+          -v $PWD:/usr/src/tdesktop \
+          -v ${{ env.CCACHE_DIR }}:/var/cache/ccache \
+          -e CONFIG \
+          -e KEEP_GOING \
+          -e IKK_API_ID \
+          -e IKK_API_HASH \
+          -e CCACHE_SLOPPINESS=pch_defines,time_macros \
+          $IMAGE_TAG \
+          env -u CCACHE_DISABLE /usr/src/tdesktop/Telegram/build/docker/centos_env/build.sh \
+          -D CMAKE_CONFIGURATION_TYPES=$CONFIG \
+          -D DESKTOP_APP_TEST_APPS=ON \
+          -D CMAKE_C_FLAGS_DEBUG="-O0 -fpch-preprocess" \
+          -D CMAKE_CXX_FLAGS_DEBUG="-O0 -fpch-preprocess" \
+          -D CMAKE_COMPILE_WARNING_AS_ERROR=${{ env.CONFIG == 'Debug' && 'ON' || 'OFF' }} \
+          -D DESKTOP_APP_DISABLE_AUTOUPDATE=${{ env.CONFIG == 'Release' && 'OFF' || 'ON' }} \
+          $API \
+          $DEFINE
+
+          docker run --rm \
+          -u $(id -u) \
+          -v $PWD:/usr/src/tdesktop \
+          $IMAGE_TAG \
+          /usr/src/tdesktop/out/ikk-tests/$CONFIG/test_ikk
+
+      - name: Count ccache misses.
+        id: ccache-stats
+        if: env.ONLY_CACHE == 'false'
+        run: |
+          MISSES=$(ccache --print-stats | sed -n 's/^cache_miss\t//p' | head -1)
+          case "$MISSES" in (*[!0-9]*|'') MISSES=0;; esac
+          echo "misses=$MISSES" >> $GITHUB_OUTPUT
+          echo "ccache misses this run: $MISSES"
+
+      - name: Trim Telegram Desktop cache.
+        if: >
+          env.ONLY_CACHE == 'false'
+            && github.ref_name == github.event.repository.default_branch
+            && fromJSON(steps.ccache-stats.outputs.misses) > 300
+        # Keeps only what this build used: a day of builds is twice the size.
+        run: ccache --evict-older-than $(( $(date +%s) - CCACHE_BUILD_START ))s
+
+      - name: Save Telegram Desktop cache.
+        if: >
+          env.ONLY_CACHE == 'false'
+            && github.ref_name == github.event.repository.default_branch
+            && fromJSON(steps.ccache-stats.outputs.misses) > 300
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.cache-tdesktop.outputs.cache-primary-key }}
+
+      # Old caches would push the libraries out of the repository quota.
+      - name: Drop superseded caches.
+        if: github.ref_name == github.event.repository.default_branch
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LIBS_KEY: ${{ runner.OS }}-libs-${{ hashFiles('Telegram/build/docker/centos_env/**') }}
+          TDESKTOP_KEY: ${{ steps.cache-tdesktop.outputs.cache-primary-key }}
+        run: bash tools/ikk/drop_superseded_caches.sh "$LIBS_KEY" "$TDESKTOP_KEY"
+
+      - name: Check.
+        if: env.ONLY_CACHE == 'false'
+        run: |
+          filePath="out/$CONFIG/Ikk"
+          if test -f "$filePath"; then
+            echo "Build successfully done! :)"
+
+            size=$(stat -c %s "$filePath")
+            echo "File size of ${filePath}: ${size} Bytes."
+          else
+            echo "Build error, output file does not exist."
+            exit 1
+          fi
+
+      - name: Smoke test.
+        if: env.ONLY_CACHE == 'false'
+        run: |
+          tools/ikk/retry.sh 3 30 sudo apt-get install -y -o Acquire::Retries=3 xvfb
+          xvfb-run -a python3 tools/ikk/smoke_test.py "out/$CONFIG/Ikk"
+
+      - name: Move artifact.
+        if: env.UPLOAD_ARTIFACT == 'true'
+        env:
+          IKK_UPDATE_KEY: ${{ secrets.IKK_UPDATE_KEY }}
+        run: |
+          cd out/$CONFIG
+          mkdir artifact
+          if [ "$CONFIG" = "Release" ]; then
+            mkdir stripped
+            cp Ikk Updater stripped/
+            strip stripped/Ikk stripped/Updater
+            # Ikk/ runs from anywhere; Ikk/share is what a package installs.
+            python3 ../../tools/ikk/linux_tree.py --out package \
+              --binary stripped/Ikk --updater stripped/Updater
+            tar --owner=0 --group=0 --numeric-owner \
+              -cJf artifact/Ikk-linux-x86_64.tar.xz -C package Ikk
+            if [ -n "$IKK_UPDATE_KEY" ]; then
+              python3 ../../tools/ikk/pack_update.py --packer Packer --out artifact \
+                --app stripped/Ikk --updater stripped/Updater
+            else
+              echo "::warning::IKK_UPDATE_KEY is not set: no update package, this build is not offered to installed copies."
+            fi
+            echo "ARTIFACT_NAME=release-linux" >> $GITHUB_ENV
+          else
+            mv Ikk artifact/
+          fi
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: env.UPLOAD_ARTIFACT == 'true'
+        name: Upload artifact.
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: out/${{ env.CONFIG }}/artifact/
+          retention-days: 1

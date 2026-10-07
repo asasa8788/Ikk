@@ -1,0 +1,17 @@
+<RCC>
+  <qresource prefix="/langs/ikk">
+    <file alias="zh-hans.strings">../langs/ikk/zh-hans.strings</file>
+    <file alias="zh-hant.strings">../langs/ikk/zh-hant.strings</file>
+  </qresource>
+  <qresource prefix="/ikk/icons">
+    <file alias="block.png">../ikk/icons/block.png</file>
+    <file alias="block_black.png">../ikk/icons/block_black.png</file>
+    <file alias="block_blue.png">../ikk/icons/block_blue.png</file>
+    <file alias="block_niello.png">../ikk/icons/block_niello.png</file>
+    <file alias="block_purple.png">../ikk/icons/block_purple.png</file>
+    <file alias="classic.png">../ikk/icons/classic.png</file>
+    <file alias="colorful.png">../ikk/icons/colorful.png</file>
+    <file alias="cyan.png">../ikk/icons/cyan.png</file>
+    <file alias="black.png">../ikk/icons/black.png</file>
+  </qresource>
+</RCC>

@@ -224,7 +224,7 @@ void SetupCommunityContent(
 		return;
 	}
 
-	if (!Nagram::Chats::CommunityGroupingDisabled()) {
+	if (!Ikk::Chats::CommunityGroupingDisabled()) {
 		Ui::AddSkip(container);
 		const auto toggle = Settings::AddButtonWithIcon(
 			container,

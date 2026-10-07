@@ -1,0 +1,8 @@
+using "ui/widgets/widgets.style";
+
+ikkSnapshotWidth: 640px;
+ikkSnapshotPadding: 16px;
+ikkSnapshotHeaderHeight: 40px;
+ikkSnapshotAvatarSize: 32px;
+ikkSnapshotPreviewHeight: 200px;
+ikkSnapshotPreviewMinimum: 80px;

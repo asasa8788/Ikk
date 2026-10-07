@@ -87,10 +87,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/view/controls/history_view_draft_options.h"
 #include "history/view/controls/history_view_suggest_options.h"
 #include "history/view/controls/history_view_ttl_button.h"
-#include "nagram/compose/buttons.h"
-#include "nagram/compose/format_toolbar.h"
-#include "nagram/compose/placeholder.h"
-#include "nagram/links/inline_bot.h"
+#include "ikk/compose/buttons.h"
+#include "ikk/compose/format_toolbar.h"
+#include "ikk/compose/placeholder.h"
+#include "ikk/links/inline_bot.h"
 #include "history/view/controls/history_view_voice_record_bar.h"
 #include "history/view/controls/history_view_webpage_processor.h"
 #include "history/view/history_view_reply.h"
@@ -1433,8 +1433,8 @@ ComposeControls::ComposeControls(
 				updateControlsGeometry(_wrap->size());
 			} else if (_botKeyboardHide && !has) {
 				_botKeyboardHide = nullptr;
-				_tabbedSelectorToggle->setVisible(!Nagram::Compose::Hidden(
-					Nagram::Compose::kHideEmojiButton));
+				_tabbedSelectorToggle->setVisible(!Ikk::Compose::Hidden(
+					Ikk::Compose::kHideEmojiButton));
 				updateControlsGeometry(_wrap->size());
 			}
 		}, _wrap->lifetime());
@@ -2935,12 +2935,12 @@ void ComposeControls::init() {
 
 	rpl::merge(
 		session().attachWebView().attachBotsUpdates(),
-		Nagram::ForDevice().Value(Nagram::Compose::kDisableAttachHover
+		Ikk::ForDevice().Value(Ikk::Compose::kDisableAttachHover
 		) | rpl::skip(1) | rpl::to_empty
 	) | rpl::on_next([=] {
 		updateAttachBotsMenu();
 	}, _wrap->lifetime());
-	Nagram::Compose::ButtonsChanged(
+	Ikk::Compose::ButtonsChanged(
 	) | rpl::on_next([=] {
 		updateBotCommandShown();
 		refreshBotMenuButton();
@@ -2960,7 +2960,7 @@ void ComposeControls::orderControls() {
 }
 
 bool ComposeControls::showRecordButton() const {
-	return !Nagram::Compose::Hidden(Nagram::Compose::kHideRecordingButton)
+	return !Ikk::Compose::Hidden(Ikk::Compose::kHideRecordingButton)
 		&& _features.recordMediaMessage
 		&& (_recordAvailability != Webrtc::RecordAvailability::None)
 		&& !_voiceRecordBar->isListenState()
@@ -3174,7 +3174,7 @@ void ComposeControls::initField() {
 		return false;
 	});
 	InitMessageFieldFade(_field, _st.field.textBg);
-	Nagram::Compose::SetupFormatToolbar(_field, _parent);
+	Ikk::Compose::SetupFormatToolbar(_field, _parent);
 	_field->setEditLinkCallback(
 		DefaultEditLinkCallback(_show, _field, &_st.boxField));
 	_field->setEditLanguageCallback(DefaultEditLanguageCallback(_show));
@@ -3330,10 +3330,10 @@ void ComposeControls::updateFieldPlaceholder() {
 			} else if (channel->adminRights() & ChatAdminRight::Anonymous) {
 				return tr::lng_send_anonymous_ph();
 			} else {
-				return Nagram::Compose::InputPlaceholder(peer);
+				return Ikk::Compose::InputPlaceholder(peer);
 			}
 		} else {
-			return Nagram::Compose::InputPlaceholder(peer);
+			return Ikk::Compose::InputPlaceholder(peer);
 		}
 	}();
 	_field->setPlaceholder(rpl::combine(
@@ -4135,7 +4135,7 @@ void ComposeControls::clearInlineBot() {
 
 void ComposeControls::inlineBotChanged() {
 	const auto isInlineBot = (_inlineBot && !_inlineLookingUpBot)
-		&& !Nagram::Links::AutomaticInlineQuery(_field);
+		&& !Ikk::Links::AutomaticInlineQuery(_field);
 	if (_isInlineBot != isInlineBot) {
 		_isInlineBot = isInlineBot;
 		updateFieldPlaceholder();
@@ -5108,7 +5108,7 @@ void ComposeControls::updateControlsVisibility() {
 		_botCommandStart->setVisible(_botCommandShown);
 	}
 	_tabbedSelectorToggle->setVisible(!_botKeyboardHide
-		&& !Nagram::Compose::Hidden(Nagram::Compose::kHideEmojiButton));
+		&& !Ikk::Compose::Hidden(Ikk::Compose::kHideEmojiButton));
 	if (_silent) {
 		_silent->setVisible(!hide);
 	}
@@ -5122,8 +5122,8 @@ void ComposeControls::updateControlsVisibility() {
 		_ttlInfo->setVisible(!hide);
 	}
 	if (_sendAs) {
-		_sendAs->setVisible(!Nagram::Compose::Hidden(
-			Nagram::Compose::kHideSendAsButton));
+		_sendAs->setVisible(!Ikk::Compose::Hidden(
+			Ikk::Compose::kHideSendAsButton));
 	}
 	if (_replaceMedia) {
 		_replaceMedia->show();
@@ -5133,8 +5133,8 @@ void ComposeControls::updateControlsVisibility() {
 	}
 	if (_attachToggle) {
 		_attachToggle->setVisible(!_replaceMedia
-			&& !Nagram::Compose::Hidden(
-				Nagram::Compose::kHideAttachButton));
+			&& !Ikk::Compose::Hidden(
+				Ikk::Compose::kHideAttachButton));
 	}
 	if (_scheduled) {
 		_scheduled->setVisible(!hide);
@@ -5149,8 +5149,8 @@ void ComposeControls::updateControlsVisibility() {
 		_commentsShown->setVisible(!_commentsShownHidden.current());
 	}
 	if (_starsReaction) {
-		_starsReaction->setVisible(!Nagram::Compose::Hidden(
-			Nagram::Compose::kHideStarsReactionButton));
+		_starsReaction->setVisible(!Ikk::Compose::Hidden(
+			Ikk::Compose::kHideStarsReactionButton));
 	}
 	updateAiButtonVisibility();
 	updateSendAsFileVisibility();
@@ -5159,7 +5159,7 @@ void ComposeControls::updateControlsVisibility() {
 }
 
 void ComposeControls::updateAiButtonVisibility() {
-	const auto hidden = Nagram::Compose::Hidden(Nagram::Compose::kHideAiButton)
+	const auto hidden = Ikk::Compose::Hidden(Ikk::Compose::kHideAiButton)
 		|| !hasEnoughLinesForAi()
 		|| !_wrap->isVisible()
 		|| _recording.current()
@@ -5390,7 +5390,7 @@ bool ComposeControls::textExceedsMaxSize() const {
 bool ComposeControls::updateBotCommandShown() {
 	auto shown = false;
 	const auto peer = _history ? _history->peer.get() : nullptr;
-	if (!Nagram::Compose::Hidden(Nagram::Compose::kHideBotCommandButton)
+	if (!Ikk::Compose::Hidden(Ikk::Compose::kHideBotCommandButton)
 			&& _botCommandStart
 			&& peer
 			&& _botCommandStartExtraGuard.current()
@@ -5439,7 +5439,7 @@ bool ComposeControls::refreshBotMenuButton() {
 		return changed;
 	}
 	auto buttonChanged = false;
-	if (Nagram::Compose::Hidden(Nagram::Compose::kHideBotMenu)
+	if (Ikk::Compose::Hidden(Ikk::Compose::kHideBotMenu)
 		|| !bot
 		|| (_mode != Mode::Normal)
 		|| (bot->botInfo->botMenuButtonUrl.isEmpty()
@@ -5524,8 +5524,8 @@ void ComposeControls::updateOuterGeometry(QRect rect) {
 
 void ComposeControls::updateMessagesTTLShown() {
 	const auto peer = _history ? _history->peer.get() : nullptr;
-	const auto shown = !Nagram::Compose::Hidden(
-		Nagram::Compose::kHideAutoDeleteButton)
+	const auto shown = !Ikk::Compose::Hidden(
+		Ikk::Compose::kHideAutoDeleteButton)
 		&& _features.ttlInfo
 		&& peer
 		&& (peer->messagesTTL() > 0);
@@ -5553,7 +5553,7 @@ void ComposeControls::refreshSendGiftToggle() {
 		| Type::Limited
 		| Type::Unique;
 	const auto has = _regularWindow
-		&& !Nagram::Compose::Hidden(Nagram::Compose::kHideGiftButton)
+		&& !Ikk::Compose::Hidden(Ikk::Compose::kHideGiftButton)
 		&& user
 		&& !_writeRestriction.current()
 		&& !user->isServiceUser()
@@ -5643,8 +5643,8 @@ void ComposeControls::updateAttachBotsMenu() {
 	_attachBotsMenu->setOrigin(
 		Ui::PanelAnimation::Origin::BottomLeft);
 	if (!ChatHelpers::ShowPanelOnClick()
-		&& !Nagram::Compose::Hidden(
-			Nagram::Compose::kDisableAttachHover)) {
+		&& !Ikk::Compose::Hidden(
+			Ikk::Compose::kDisableAttachHover)) {
 		_attachToggle->installEventFilter(_attachBotsMenu.get());
 	}
 	_attachBotsMenu->heightValue(
@@ -6408,7 +6408,7 @@ void ComposeControls::applyInlineBotQuery(
 			_inlineBot = bot;
 			_inlineLookingUpBot = false;
 			inlineBotChanged();
-		} else if (Nagram::Links::AutoInlineBotEnabled()) {
+		} else if (Ikk::Links::AutoInlineBotEnabled()) {
 			inlineBotChanged();
 		}
 		if (!_inlineResults) {

@@ -31,7 +31,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "main/main_session.h"
 #include "storage/storage_account.h"
 #include "apiwrap.h"
-#include "nagram/network/runtime.h"
+#include "ikk/network/runtime.h"
 
 #include <QtCore/QFileInfo>
 
@@ -148,7 +148,7 @@ Uploader::Entry::Entry(
 
 void Uploader::Entry::setDocSize(int64 size) {
 	docSize = size;
-	if (const auto boosted = Nagram::Network::UploadPartSize(size)) {
+	if (const auto boosted = Ikk::Network::UploadPartSize(size)) {
 		setPartSize(boosted);
 		return;
 	}

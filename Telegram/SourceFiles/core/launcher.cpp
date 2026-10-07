@@ -17,7 +17,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "core/update_checker.h"
 #include "core/sandbox.h"
 #include "core/version.h"
-#include "nagram/core/version.h"
+#include "ikk/core/version.h"
 #include "base/concurrent_timer.h"
 #include "base/options.h"
 
@@ -184,7 +184,7 @@ void ComputeInstallBetaVersions() {
 		if (f.open(QIODevice::ReadOnly)) {
 			cSetInstallBetaVersion(f.read(1) != "0");
 		}
-	} else if (Nagram::VersionIsBeta()) {
+	} else if (Ikk::VersionIsBeta()) {
 		WriteInstallBetaVersionsSetting();
 	}
 }
@@ -219,7 +219,7 @@ void ComputeInstallationTag() {
 
 bool MoveLegacyAlphaFolder(const QString &folder, const QString &file) {
 	const auto was = cExeDir() + folder;
-	const auto now = cExeDir() + u"NagramForcePortable"_q;
+	const auto now = cExeDir() + u"IkkForcePortable"_q;
 	if (QDir(was).exists() && !QDir(now).exists()) {
 		const auto oldFile = was + "/tdata/" + file;
 		const auto newFile = was + "/tdata/alpha";
@@ -240,8 +240,8 @@ bool MoveLegacyAlphaFolder(const QString &folder, const QString &file) {
 }
 
 bool MoveLegacyAlphaFolder() {
-	if (!MoveLegacyAlphaFolder(u"NagramAlpha_data"_q, u"alpha"_q)
-		|| !MoveLegacyAlphaFolder(u"NagramBeta_data"_q, u"beta"_q)) {
+	if (!MoveLegacyAlphaFolder(u"IkkAlpha_data"_q, u"alpha"_q)
+		|| !MoveLegacyAlphaFolder(u"IkkBeta_data"_q, u"beta"_q)) {
 		return false;
 	}
 	return true;
@@ -252,7 +252,7 @@ bool CheckPortableVersionFolder() {
 		return false;
 	}
 
-	const auto portable = cExeDir() + u"NagramForcePortable"_q;
+	const auto portable = cExeDir() + u"IkkForcePortable"_q;
 	QFile key(portable + u"/tdata/alpha"_q);
 	if (cAlphaVersion()) {
 		Assert(*AlphaPrivateKey != 0);
@@ -341,8 +341,8 @@ void Launcher::init() {
 	prepareSettings();
 	initQtMessageLogging();
 
-	QApplication::setApplicationName(u"NagramDesktop"_q);
-	QApplication::setApplicationDisplayName(u"Nagram Desktop"_q);
+	QApplication::setApplicationName(u"IkkDesktop"_q);
+	QApplication::setApplicationDisplayName(u"Ikk Desktop"_q);
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	// fallback session management is useless for tdesktop since it doesn't have
@@ -390,7 +390,7 @@ int Launcher::exec() {
 	}
 
 	// Before Logs::start(), which is where the working directory gets
-	// chosen: a translocated bundle never sees its NagramForcePortable.
+	// chosen: a translocated bundle never sees its IkkForcePortable.
 	if (!Platform::CheckAppTranslocation()) {
 		return 0;
 	}

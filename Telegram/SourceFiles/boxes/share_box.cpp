@@ -34,8 +34,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/history_item.h"
 #include "history/history_item_helpers.h"
 #include "history/view/controls/history_view_forward_panel.h"
-#include "nagram/compose/options.h"
-#include "nagram/chats/recent_chats.h"
+#include "ikk/compose/options.h"
+#include "ikk/chats/recent_chats.h"
 #include "history/view/history_view_element.h"
 #include "history/view/history_view_context_menu.h" // CopyPostLink.
 #include "settings/sections/settings_premium.h"
@@ -853,7 +853,7 @@ ShareBox::Inner::Inner(
 	if (_descriptor.filterCallback(selfHistory)) {
 		_defaultChatsIndexed->addToEnd(selfHistory);
 	}
-	Nagram::Chats::ForEachRecentShareTarget(
+	Ikk::Chats::ForEachRecentShareTarget(
 		_descriptor.session,
 		[&](not_null<History*> history) {
 			if (!_defaultChatsIndexed->getRow(history)
@@ -1900,8 +1900,8 @@ ShareBox::SubmitCallback ShareBox::DefaultForwardCallback(
 				message.action.clearDraft = false;
 				api.sendMessage(std::move(message));
 			};
-			const auto forwardFirst = Nagram::ForDevice().Get(
-				Nagram::Compose::kForwardBeforeComment);
+			const auto forwardFirst = Ikk::ForDevice().Get(
+				Ikk::Compose::kForwardBeforeComment);
 			if (!forwardFirst) {
 				sendComment();
 			}

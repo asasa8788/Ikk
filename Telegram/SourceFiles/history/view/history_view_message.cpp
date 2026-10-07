@@ -6,9 +6,9 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "history/view/history_view_message.h"
-#include "nagram/interface/options.h"
-#include "nagram/messages/reactions.h"
-#include "nagram/messages/content.h"
+#include "ikk/interface/options.h"
+#include "ikk/messages/reactions.h"
+#include "ikk/messages/content.h"
 
 #include "api/api_suggest_post.h"
 #include "api/api_transcribes.h"
@@ -5343,7 +5343,7 @@ Reactions::ButtonParameters Message::reactionButtonParameters(
 	result.center = QPoint(
 		std::min(std::max(result.center.x(), minSkip), width() - minSkip),
 		result.center.y());
-	return Nagram::Messages::FilterReactionButton(
+	return Ikk::Messages::FilterReactionButton(
 		data()->history()->peer, result);
 }
 
@@ -6007,7 +6007,7 @@ std::optional<QSize> Message::rightActionSize() const {
 }
 
 bool Message::displayFastShare() const {
-	if (Nagram::Messages::HideQuickShare()) {
+	if (Ikk::Messages::HideQuickShare()) {
 		return false;
 	}
 	const auto item = data();
@@ -6543,8 +6543,8 @@ Ui::BubbleRounding Message::countMessageRounding() const {
 	const auto media = smallBottom ? nullptr : this->media();
 	const auto item = data();
 	const auto keyboard = item->inlineReplyKeyboard();
-	const auto skipTail = Nagram::ForDevice().Get(
-		Nagram::Interface::kHideBubbleTail) || smallBottom
+	const auto skipTail = Ikk::ForDevice().Get(
+		Ikk::Interface::kHideBubbleTail) || smallBottom
 		|| (media && media->skipBubbleTail())
 		|| (keyboard != nullptr)
 		|| item->isFakeAboutView()
@@ -6627,12 +6627,12 @@ int Message::resizeContentGetHeight(int newWidth) {
 		}
 	}
 	accumulate_min(contentWidth, maxWidth());
-	const auto textWidthPercent = Nagram::ForDevice().Get(
-		Nagram::Interface::kTextMessageWidth);
+	const auto textWidthPercent = Ikk::ForDevice().Get(
+		Ikk::Interface::kTextMessageWidth);
 	const auto wide = UnlimitedMessageWidth.value()
 		|| (item->history()->peer->isBroadcast()
-			&& Nagram::ForDevice().Get(
-				Nagram::Interface::kWideChannelPosts));
+			&& Ikk::ForDevice().Get(
+				Ikk::Interface::kWideChannelPosts));
 	_bubbleWidthLimit = (textWidthPercent && !mediaDisplayed)
 		? std::max(st::msgMinWidth,
 			st::msgMaxWidth * textWidthPercent / 100)

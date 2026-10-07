@@ -985,8 +985,8 @@ stage('libwebp', """
     git clone -b v1.6.0 https://github.com/webmproject/libwebp.git
     cd libwebp
 win:
-    nmake /f Makefile.vc CFG=debug-static OBJDIR=out RTLIBCFG=static all
-    nmake /f Makefile.vc CFG=release-static OBJDIR=out RTLIBCFG=static all
+    nmake /f Makefile.vc ARCH=x64 CFG=debug-static OBJDIR=out RTLIBCFG=static all
+    nmake /f Makefile.vc ARCH=x64 CFG=release-static OBJDIR=out RTLIBCFG=static all
     copy out\\release-static\\$X8664\\lib\\libwebp.lib out\\release-static\\$X8664\\lib\\webp.lib
     copy out\\release-static\\$X8664\\lib\\libwebpdemux.lib out\\release-static\\$X8664\\lib\\webpdemux.lib
     copy out\\release-static\\$X8664\\lib\\libwebpmux.lib out\\release-static\\$X8664\\lib\\webpmux.lib
@@ -1174,6 +1174,8 @@ stage('ffmpeg', """
 win:
 depends:patches/ffmpeg.patch
     git apply ../patches/ffmpeg.patch
+    %THIRDPARTY_DIR%\\msys64\\usr\\bin\\bash -c "sed -i 's|/link|/link.exe|' compat/windows/mslink"
+    %THIRDPARTY_DIR%\\msys64\\usr\\bin\\bash -c "sed -i -e 's|grep -q \\x5eMicrosoft|grep -q Microsoft|g' -e 's|grep \\x5eMicrosoft|grep Microsoft|g' configure"
 
     SET PATH=%THIRDPARTY_DIR%\\msys64\\usr\\bin;%PATH%
     SET CHERE_INVOKING=enabled_from_arguments
@@ -1744,6 +1746,7 @@ win:
         -static ^
         -static-runtime ^
         -feature-c++20 ^
+        -D FEATURE_cxx17_filesystem=ON ^
         -openssl linked ^
         -system-webp ^
         -system-zlib ^

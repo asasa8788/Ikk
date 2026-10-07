@@ -7,7 +7,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "data/data_auto_download.h"
 
-#include "nagram/media/extras.h"
+#include "ikk/media/extras.h"
 
 #include "data/data_peer.h"
 #include "data/data_photo.h"
@@ -361,7 +361,7 @@ bool Should(
 		|| document->isVideoMessage()
 		|| document->isSong()
 		|| document->isVideoFile()
-		|| Nagram::Media::AutoDownloadBlocked(document)) {
+		|| Ikk::Media::AutoDownloadBlocked(document)) {
 		return false;
 	}
 	return data.shouldDownload(source, Type::File, document->size);
@@ -384,7 +384,7 @@ bool Should(
 			|| document->isVideoMessage()
 			|| document->isSong()
 			|| document->isVideoFile()
-			|| Nagram::Media::AutoDownloadBlocked(document)) {
+			|| Ikk::Media::AutoDownloadBlocked(document)) {
 			return false;
 		}
 		return ForceAllowed(

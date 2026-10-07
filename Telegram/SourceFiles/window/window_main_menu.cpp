@@ -6,10 +6,10 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/window_main_menu.h"
-#include "nagram/chats/recent_chats.h"
-#include "nagram/media/extras.h"
-#include "nagram/interface/main_menu.h"
-#include "nagram/interface/appearance.h"
+#include "ikk/chats/recent_chats.h"
+#include "ikk/media/extras.h"
+#include "ikk/interface/main_menu.h"
+#include "ikk/interface/appearance.h"
 
 #include "apiwrap.h"
 #include "base/event_filter.h"
@@ -312,7 +312,7 @@ MainMenu::MainMenu(
 	not_null<SessionController*> controller)
 : LayerWidget(parent)
 , _controller(controller)
-, _nagramTitle(Nagram::Interface::MainMenuTitle())
+, _ikkTitle(Ikk::Interface::MainMenuTitle())
 , _userpicButton(
 	this,
 	_controller->session().user(),
@@ -390,8 +390,8 @@ MainMenu::MainMenu(
 	parentResized();
 
 	_telegram->setMarkedText(tr::link(
-		u"Nagram Desktop"_q,
-		u"https://github.com/NextAlone/Nagram-qt"_q));
+		u"Ikk Desktop"_q,
+		u"https://github.com/ikk-dev/Ikk"_q));
 	_telegram->setLinksTrusted();
 	// The canary version is too long for the "Version {version}" form.
 	_version->setMarkedText(
@@ -433,9 +433,9 @@ MainMenu::MainMenu(
 
 	initResetScaleButton();
 
-	if ((Nagram::Interface::AlwaysSeasonal()
+	if ((Ikk::Interface::AlwaysSeasonal()
 			|| (CanCheckSpecialEvent() && CheckSpecialEvent()))
-		&& Nagram::Interface::MainMenuSeasonal()) {
+		&& Ikk::Interface::MainMenuSeasonal()) {
 		const auto snowLifetime = lifetime().make_state<rpl::lifetime>();
 		const auto rebuild = [=] {
 			const auto snowRaw = Ui::CreateChild<Ui::RpWidget>(this);
@@ -668,13 +668,13 @@ void MainMenu::setupMenu() {
 		return AddButtonWithIcon(
 			id.isEmpty()
 				? _menu.get()
-				: Nagram::Interface::AddMainMenuGroup(_menu, id).get(),
+				: Ikk::Interface::AddMainMenuGroup(_menu, id).get(),
 			std::move(text),
 			st::mainMenuButton,
 			std::move(descriptor));
 	};
 	if (!_controller->session().supportMode()) {
-		const auto profile = Nagram::Interface::AddMainMenuGroup(
+		const auto profile = Ikk::Interface::AddMainMenuGroup(
 			_menu, u"profile"_q);
 		profile->add(
 			CreateButtonWithIcon(
@@ -687,10 +687,10 @@ void MainMenu::setupMenu() {
 				Info::Stories::MakeMyProfile(controller->session().user()));
 		});
 
-		SetupMenuBots(Nagram::Interface::AddMainMenuGroup(
+		SetupMenuBots(Ikk::Interface::AddMainMenuGroup(
 			_menu, u"bots"_q), controller);
 
-		if (!Nagram::Interface::MainMenuCustomOrder()) {
+		if (!Ikk::Interface::MainMenuCustomOrder()) {
 			_menu->add(
 				object_ptr<Ui::PlainShadow>(_menu),
 				{ 0, st::mainMenuSkip, 0, st::mainMenuSkip });
@@ -737,8 +737,8 @@ void MainMenu::setupMenu() {
 		)->setClickedCallback([=] {
 			controller->showPeerHistory(controller->session().user());
 		});
-		Nagram::Chats::AddRecentChatsMenuItem(addAction, controller);
-		Nagram::Media::AddDownloadsMenuItem(addAction, controller);
+		Ikk::Chats::AddRecentChatsMenuItem(addAction, controller);
+		Ikk::Media::AddDownloadsMenuItem(addAction, controller);
 	} else {
 		addAction(
 			tr::lng_profile_add_contact(),
@@ -917,7 +917,7 @@ void MainMenu::drawName(Painter &p) {
 		_nameVersion = user->nameVersion();
 		_name.setText(
 			st::semiboldTextStyle,
-			_nagramTitle.isEmpty() ? user->name() : _nagramTitle,
+			_ikkTitle.isEmpty() ? user->name() : _ikkTitle,
 			Ui::NameTextOptions());
 		moveBadge();
 	}

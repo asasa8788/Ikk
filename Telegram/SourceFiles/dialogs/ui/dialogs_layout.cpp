@@ -6,9 +6,9 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "dialogs/ui/dialogs_layout.h"
-#include "nagram/chats/layout.h"
-#include "nagram/chats/local_pins.h"
-#include "nagram/privacy/options.h"
+#include "ikk/chats/layout.h"
+#include "ikk/chats/local_pins.h"
+#include "ikk/privacy/options.h"
 
 #include "base/options.h"
 #include "base/unixtime.h"
@@ -488,14 +488,14 @@ void PaintRow(
 		p.translate(swipeMirrored ? swipeTranslation : -swipeTranslation, 0);
 	}
 	p.fillRect(geometry, bg);
-	if (Nagram::Privacy::DemoMode()) {
+	if (Ikk::Privacy::DemoMode()) {
 		p.setFont(st::semiboldFont);
 		p.setPen(st::dialogsNameFg);
 		p.drawTextLeft(
 			context.st->nameLeft,
 			context.st->nameTop,
 			context.width,
-			tr::lng_nagram_demo_hidden(tr::now));
+			tr::lng_ikk_demo_hidden(tr::now));
 		return;
 	}
 	if (!(flags & Flag::TopicJumpRipple)) {
@@ -619,7 +619,7 @@ void PaintRow(
 		}
 	}
 	auto texttop = context.st->textTop;
-	if (Nagram::Chats::HidePreview(entry->asFolder(),
+	if (Ikk::Chats::HidePreview(entry->asFolder(),
 				history && history->peer->isSelf())) {
 		if (history) {
 			PaintDialogDate(p, entry, fakeRow, date, rectForName, context);
@@ -641,7 +641,7 @@ void PaintRow(
 			nameleft,
 			texttop + st::dialogsTextFont->ascent,
 			st::dialogsTextFont->elided(
-				Nagram::Chats::HiddenPreviewText(entry->asFolder()),
+				Ikk::Chats::HiddenPreviewText(entry->asFolder()),
 				availableWidth));
 	} else if (const auto folder = entry->asFolder()) {
 		const auto availableWidth = PaintWideCounter(
@@ -709,7 +709,7 @@ void PaintRow(
 		auto availableWidth = namewidth;
 		if (const auto used = PaintRightButton(p, context)) {
 			availableWidth -= used;
-		} else if (Nagram::Chats::ShowsPinnedIcon(entry, context.filter)
+		} else if (Ikk::Chats::ShowsPinnedIcon(entry, context.filter)
 			&& (context.filter || !entry->fixedOnTopIndex())) {
 			auto &icon = ThreeStateIcon(
 				st::dialogsPinnedIcon,
@@ -807,7 +807,7 @@ void PaintRow(
 		auto availableWidth = namewidth;
 		if (const auto used = PaintRightButton(p, context)) {
 			availableWidth -= used;
-		} else if (Nagram::Chats::ShowsPinnedIcon(entry, context.filter)
+		} else if (Ikk::Chats::ShowsPinnedIcon(entry, context.filter)
 			&& (context.filter || !entry->fixedOnTopIndex())) {
 			auto &icon = ThreeStateIcon(
 				st::dialogsPinnedIcon,
@@ -847,7 +847,7 @@ void PaintRow(
 		}
 
 		paintItemCallback(nameleft, namewidth);
-	} else if (Nagram::Chats::ShowsPinnedIcon(entry, context.filter)
+	} else if (Ikk::Chats::ShowsPinnedIcon(entry, context.filter)
 		&& (context.filter || !entry->fixedOnTopIndex())) {
 		auto &icon = ThreeStateIcon(
 			st::dialogsPinnedIcon,
@@ -1201,7 +1201,7 @@ void RowPainter::Paint(
 		return std::max(itemDate, draftDate);
 	}();
 	const auto displayPinnedIcon = badgesState.empty()
-		&& Nagram::Chats::ShowsPinnedIcon(entry, context.filter)
+		&& Ikk::Chats::ShowsPinnedIcon(entry, context.filter)
 		&& (context.filter || !entry->fixedOnTopIndex());
 
 	const auto from = history
@@ -1277,10 +1277,10 @@ void RowPainter::Paint(
 					[=] { entry->updateChatListEntry(); },
 					{});
 			}
-			if (Nagram::Chats::PreviewLines() > 1 && !forum && !monoforum
+			if (Ikk::Chats::PreviewLines() > 1 && !forum && !monoforum
 				&& !entry->hasChatsFilterTags(context.filter)) {
 				rect.setHeight(st::dialogsTextFont->height
-					* Nagram::Chats::PreviewLines());
+					* Ikk::Chats::PreviewLines());
 			}
 			if (forum || monoforum) {
 				rect.setHeight(context.st->topicsHeight + rect.height());

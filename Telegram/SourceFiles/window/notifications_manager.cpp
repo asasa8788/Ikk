@@ -6,8 +6,8 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/notifications_manager.h"
-#include "nagram/interface/notifications.h"
-#include "nagram/privacy/options.h"
+#include "ikk/interface/notifications.h"
+#include "ikk/privacy/options.h"
 
 #include "base/options.h"
 #include "base/platform/base_platform_info.h"
@@ -368,7 +368,7 @@ System::SkipState System::computeSkipState(
 	if (notifyBy) {
 		notifySettings->request(notifyBy);
 	}
-	if (const auto review = Nagram::Interface::ReviewNotification(item, messageType)) {
+	if (const auto review = Ikk::Interface::ReviewNotification(item, messageType)) {
 		return withSilent(*review ? SkipState::DontSkip : SkipState::Skip);
 	}
 
@@ -412,7 +412,7 @@ System::Timing System::countTiming(
 	} else if (cOtherOnline() >= t) {
 		delay = config.notifyDefaultDelay;
 	}
-	delay = Nagram::Interface::NotificationDelay(delay, minimalDelay, otherActive);
+	delay = Ikk::Interface::NotificationDelay(delay, minimalDelay, otherActive);
 	return {
 		.delay = delay,
 		.when = ms + delay,
@@ -1560,7 +1560,7 @@ void NativeManager::doShowNotification(NotificationFields &&fields) {
 			: Data::ItemNotificationType::Reaction)
 		: Data::ItemNotificationType::Message;
 	auto options = getNotificationOptions(fields.item, type);
-	const auto demo = Nagram::Privacy::DemoMode();
+	const auto demo = Ikk::Privacy::DemoMode();
 	if (demo) {
 		options.hideNameAndPhoto = true;
 		options.hideMessageText = true;
@@ -1590,7 +1590,7 @@ void NativeManager::doShowNotification(NotificationFields &&fields) {
 		: (scheduled && peer->isSelf())
 		? tr::lng_notification_reminder(tr::now)
 		: subWithChat();
-	const auto fullTitle = demo ? u"Nagram"_q : addTargetAccountName(title, &peer->session());
+	const auto fullTitle = demo ? u"Ikk"_q : addTargetAccountName(title, &peer->session());
 	const auto hideReactionSender = reactionFrom
 		&& !peer->session().api().reactionsNotifySettings()
 			.showPreviewsCurrent();

@@ -6,9 +6,9 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "data/data_peer.h"
-#include "nagram/interface/roundness.h"
-#include "nagram/privacy/alias.h"
-#include "nagram/privacy/protection.h"
+#include "ikk/interface/roundness.h"
+#include "ikk/privacy/alias.h"
+#include "ikk/privacy/protection.h"
 
 #include "api/api_sensitive_content.h"
 #include "data/data_user.h"
@@ -119,7 +119,7 @@ UnavailableReason UnavailableReason::Sensitive() {
 QString UnavailableReason::Compute(
 		not_null<Main::Session*> session,
 		const std::vector<UnavailableReason> &list) {
-	if (Nagram::Privacy::IgnoreRestrictions()) return QString();
+	if (Ikk::Privacy::IgnoreRestrictions()) return QString();
 	const auto &skip = IgnoredReasons(session);
 	auto &&filtered = ranges::views::all(
 		list
@@ -133,7 +133,7 @@ QString UnavailableReason::Compute(
 
 bool UnavailableReason::IgnoreSensitiveMark(
 		not_null<Main::Session*> session) {
-	return Nagram::Privacy::SkipSensitiveWarning(session) || ranges::contains(
+	return Ikk::Privacy::SkipSensitiveWarning(session) || ranges::contains(
 			IgnoredReasons(session),
 			UnavailableReason::Sensitive().reason);
 }
@@ -532,7 +532,7 @@ QImage PeerData::GenerateUserpicImage(
 			return image;
 		} else if (radius) {
 			return round(*radius);
-		} else if (const auto custom = Nagram::Interface::AvatarRadius(
+		} else if (const auto custom = Ikk::Interface::AvatarRadius(
 				size, peer->userpicShape())) {
 			return round(*custom);
 		} else if (peer->isForum()) {
@@ -552,7 +552,7 @@ QImage PeerData::GenerateUserpicImage(
 	} else if (radius) {
 		const auto r = *radius;
 		peer->ensureEmptyUserpic()->paintRounded(p, 0, 0, size, size, r);
-	} else if (const auto custom = Nagram::Interface::AvatarRadius(
+	} else if (const auto custom = Ikk::Interface::AvatarRadius(
 			size, peer->userpicShape())) {
 		peer->ensureEmptyUserpic()->paintRounded(
 			p, 0, 0, size, size, *custom);
@@ -1100,7 +1100,7 @@ void PeerData::fillNames() {
 	};
 
 	appendToIndex(name());
-	appendToIndex(Nagram::Privacy::Alias(this));
+	appendToIndex(Ikk::Privacy::Alias(this));
 	const auto appendTranslit = !toIndexList.isEmpty()
 		&& cRussianLetters().match(toIndexList.front()).hasMatch();
 	if (appendTranslit) {
@@ -1331,7 +1331,7 @@ const QString &PeerData::topBarNameText() const {
 	if (const auto to = migrateTo()) {
 		return to->topBarNameText();
 	}
-	const auto &alias = Nagram::Privacy::Alias(this);
+	const auto &alias = Ikk::Privacy::Alias(this);
 	if (!alias.isEmpty()) {
 		return alias;
 	} else if (const auto user = asUser()) {

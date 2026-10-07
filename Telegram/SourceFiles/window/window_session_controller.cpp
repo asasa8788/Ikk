@@ -6,12 +6,12 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/window_session_controller.h"
-#include "nagram/chats/startup_folder.h"
-#include "nagram/chats/sort.h"
-#include "nagram/chats/recent_chats.h"
-#include "nagram/chats/reading_position.h"
-#include "nagram/chats/folders.h"
-#include "nagram/privacy/protection.h"
+#include "ikk/chats/startup_folder.h"
+#include "ikk/chats/sort.h"
+#include "ikk/chats/recent_chats.h"
+#include "ikk/chats/reading_position.h"
+#include "ikk/chats/folders.h"
+#include "ikk/privacy/protection.h"
 
 #include "apiwrap.h"
 #include "api/api_cloud_password.h"
@@ -151,7 +151,7 @@ base::options::toggle OptionExternalMediaViewer({
 [[nodiscard]] bool HasSavingRestriction(HistoryItem *item) {
 	return item
 		&& (item->forbidsSaving()
-			|| !Nagram::Privacy::AllowsCopy(item->history()->peer));
+			|| !Ikk::Privacy::AllowsCopy(item->history()->peer));
 }
 
 class MainWindowShow final : public ChatHelpers::Show {
@@ -1589,11 +1589,11 @@ SessionController::SessionController(
 , _defaultChatTheme(std::make_shared<Ui::ChatTheme>())
 , _chatStyle(std::make_unique<Ui::ChatStyle>(session->colorIndicesValue())) {
 	init();
-	if (_isPrimary) Nagram::Chats::WatchSorting(session, lifetime());
-	Nagram::Chats::WatchRecentChats(this);
-	Nagram::Chats::WatchReadingPositions(this);
-	Nagram::Chats::WatchFolders(this);
-	Nagram::Privacy::WatchRestrictions(this);
+	if (_isPrimary) Ikk::Chats::WatchSorting(session, lifetime());
+	Ikk::Chats::WatchRecentChats(this);
+	Ikk::Chats::WatchReadingPositions(this);
+	Ikk::Chats::WatchFolders(this);
+	Ikk::Privacy::WatchRestrictions(this);
 
 	_chatStyleTheme = _defaultChatTheme;
 	_chatStyle->apply(_defaultChatTheme.get());
@@ -1943,7 +1943,7 @@ void SessionController::setupScreenshotProtection() {
 	) | rpl::map([](Dialogs::Key key) {
 		const auto peer = key.peer();
 		return peer
-			? (Nagram::Privacy::AllowsCopyValue(peer)
+			? (Ikk::Privacy::AllowsCopyValue(peer)
 				| rpl::map(!rpl::mappers::_1))
 			: (rpl::single(false) | rpl::type_erased);
 	}) | rpl::flatten_latest(), lifetime());
@@ -2052,7 +2052,7 @@ rpl::producer<> SessionController::filtersMenuChanged() const {
 }
 
 void SessionController::checkOpenedFilter() {
-	Nagram::Chats::VerifyStartupFolder(&session());
+	Ikk::Chats::VerifyStartupFolder(&session());
 	activateFirstChatsFilter();
 	if (const auto filterId = activeChatsFilterCurrent()) {
 		const auto &list = session().data().chatsFilters().list();
@@ -2072,7 +2072,7 @@ void SessionController::activateFirstChatsFilter() {
 		return;
 	}
 	_filtersActivated = true;
-	setActiveChatsFilter(Nagram::Chats::StartupFolder(
+	setActiveChatsFilter(Ikk::Chats::StartupFolder(
 		&session(), session().data().chatsFilters().defaultId()));
 }
 
@@ -2108,7 +2108,7 @@ void SessionController::openFolder(not_null<Data::Folder*> folder) {
 		resetFakeUnreadWhileOpened();
 	}
 	if (activeChatsFilterCurrent() != 0) {
-		Nagram::Chats::ResetFilterForFolder(this);
+		Ikk::Chats::ResetFilterForFolder(this);
 	} else if (adaptive().isOneColumn()) {
 		clearSectionStack(SectionShow::Way::ClearStack);
 	}
@@ -3336,7 +3336,7 @@ void SessionController::setActiveChatsFilter(
 		resetFakeUnreadWhileOpened();
 	}
 	_activeChatsFilter.force_assign(id);
-	Nagram::Chats::RememberFolder(&session(), id);
+	Ikk::Chats::RememberFolder(&session(), id);
 	if (id || !changed) {
 		closeForum();
 		closeFolder();
